@@ -3,24 +3,32 @@ import { Bell, ChevronDown, RotateCcw, Settings } from 'lucide-react';
 import { useAuction } from '../../context/AuctionContext';
 import { navItems } from '../../data/mockData';
 import TeamsDropdown from './TeamsDropdown';
+import StatsDropdown from './StatsDropdown';
 import './Navbar.css';
+
+const MENUS = {
+  teams: TeamsDropdown,
+  stats: StatsDropdown,
+};
 
 export default function Navbar() {
   const { actions } = useAuction();
-  const [teamsOpen, setTeamsOpen] = useState(false);
-  const teamsWrapRef = useRef(null);
+  // Which dropdown is open: 'teams' | 'stats' | null. Only one at a time.
+  const [openMenu, setOpenMenu] = useState(null);
+  const wrapRefs = useRef({});
 
-  // Close the dropdown when clicking anywhere outside of it.
+  // Outside click closes whatever's open.
   useEffect(() => {
-    if (!teamsOpen) return;
-    const onClick = (e) => {
-      if (!teamsWrapRef.current?.contains(e.target)) {
-        setTeamsOpen(false);
-      }
+    if (!openMenu) return;
+    const onMouseDown = (e) => {
+      const wrap = wrapRefs.current[openMenu];
+      if (!wrap?.contains(e.target)) setOpenMenu(null);
     };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
-  }, [teamsOpen]);
+    document.addEventListener('mousedown', onMouseDown);
+    return () => document.removeEventListener('mousedown', onMouseDown);
+  }, [openMenu]);
+
+  const close = () => setOpenMenu(null);
 
   return (
     <header className="navbar">
@@ -28,38 +36,41 @@ export default function Navbar() {
 
       <nav className="navbar__links" aria-label="Primary">
         {navItems.map((item) => {
-          if (item.id === 'teams') {
+          const Menu = MENUS[item.id];
+          if (!Menu) {
             return (
-              <div
+              <button
                 key={item.id}
-                className="navbar__teams-wrap"
-                ref={teamsWrapRef}
+                className={`navbar__link ${item.active ? 'is-active' : ''}`}
               >
-                <button
-                  className={`navbar__link navbar__link--teams ${teamsOpen ? 'is-open' : ''}`}
-                  onClick={() => setTeamsOpen((o) => !o)}
-                  aria-haspopup="dialog"
-                  aria-expanded={teamsOpen}
-                >
-                  {item.label}
-                  <ChevronDown
-                    size={14}
-                    className={`navbar__chevron ${teamsOpen ? 'is-up' : ''}`}
-                  />
-                </button>
-                {teamsOpen && (
-                  <TeamsDropdown onClose={() => setTeamsOpen(false)} />
-                )}
-              </div>
+                {item.label}
+              </button>
             );
           }
+
+          const isOpen = openMenu === item.id;
           return (
-            <button
+            <div
               key={item.id}
-              className={`navbar__link ${item.active ? 'is-active' : ''}`}
+              className="navbar__menu-wrap"
+              ref={(node) => {
+                wrapRefs.current[item.id] = node;
+              }}
             >
-              {item.label}
-            </button>
+              <button
+                className={`navbar__link navbar__link--menu ${isOpen ? 'is-open' : ''}`}
+                onClick={() => setOpenMenu(isOpen ? null : item.id)}
+                aria-haspopup="dialog"
+                aria-expanded={isOpen}
+              >
+                {item.label}
+                <ChevronDown
+                  size={14}
+                  className={`navbar__chevron ${isOpen ? 'is-up' : ''}`}
+                />
+              </button>
+              {isOpen && <Menu onClose={close} />}
+            </div>
           );
         })}
       </nav>

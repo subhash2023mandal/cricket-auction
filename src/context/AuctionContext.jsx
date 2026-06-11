@@ -32,12 +32,45 @@ function makeBidId() {
   return `bid-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+// After a SOLD or UNSOLD action, work out the next player. If the active pool
+// is empty but the organizer (unsold pile) has players, we start a new round —
+// the unsold pile gets shuffled back into a fresh pool and the round counter
+// ticks up.
+function advanceAfterAction({ pool, teams, round }) {
+  if (pool.length > 0) {
+    const [next, ...rest] = pool;
+    return { current: newCurrentFrom(next), pool: rest, teams, round };
+  }
+
+  const organizer = teams.find((t) => t.isOrganizer);
+  if (organizer && organizer.squad.length > 0) {
+    // Drop the per-sale metadata so re-listed players look fresh.
+    const recycled = shuffle(organizer.squad).map(
+      // eslint-disable-next-line no-unused-vars
+      ({ soldPriceLakh, soldAt, ...player }) => player,
+    );
+    const [next, ...remaining] = recycled;
+    const updatedTeams = teams.map((t) =>
+      t.isOrganizer ? { ...t, squad: [] } : t,
+    );
+    return {
+      current: newCurrentFrom(next),
+      pool: remaining,
+      teams: updatedTeams,
+      round: round + 1,
+    };
+  }
+
+  return { current: null, pool: [], teams, round };
+}
+
 // ─── Initial / seed state ───────────────────────────────────────────────────
 export function seedState() {
   const shuffled = shuffle(allPlayers);
   const [first, ...rest] = shuffled;
   return {
     version: STORAGE_VERSION,
+    round: 1,
     pool: rest,
     current: newCurrentFrom(first),
     teams: [
@@ -108,7 +141,7 @@ function reducer(state, action) {
       const { player, currentPriceLakh, highestBidderId } = state.current;
       if (!highestBidderId) return state; // need a bidder to sell
 
-      const teams = state.teams.map((t) => {
+      const teamsAfterSale = state.teams.map((t) => {
         if (t.id !== highestBidderId) return t;
         return {
           ...t,
@@ -120,13 +153,15 @@ function reducer(state, action) {
         };
       });
 
-      const [nextPlayer, ...rest] = state.pool;
+      const next = advanceAfterAction({
+        pool: state.pool,
+        teams: teamsAfterSale,
+        round: state.round ?? 1,
+      });
 
       return {
         ...state,
-        pool: rest,
-        current: newCurrentFrom(nextPlayer),
-        teams,
+        ...next,
         bidHistory: [],
         soldHistory: [
           ...state.soldHistory,
@@ -144,7 +179,7 @@ function reducer(state, action) {
     case 'UNSOLD': {
       if (!state.current) return state;
       const { player } = state.current;
-      const teams = state.teams.map((t) =>
+      const teamsAfterUnsold = state.teams.map((t) =>
         t.id === ORGANIZER_ID
           ? {
               ...t,
@@ -155,12 +190,16 @@ function reducer(state, action) {
             }
           : t,
       );
-      const [nextPlayer, ...rest] = state.pool;
+
+      const next = advanceAfterAction({
+        pool: state.pool,
+        teams: teamsAfterUnsold,
+        round: state.round ?? 1,
+      });
+
       return {
         ...state,
-        pool: rest,
-        current: newCurrentFrom(nextPlayer),
-        teams,
+        ...next,
         bidHistory: [],
       };
     }

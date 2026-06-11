@@ -6,7 +6,7 @@ import './PlayerShowcase.css';
 
 export default function PlayerShowcase() {
   const { state } = useAuction();
-  const { current, teams, pool, soldHistory } = state;
+  const { current, teams, pool, soldHistory, round = 1 } = state;
 
   if (!current) {
     return (
@@ -14,7 +14,8 @@ export default function PlayerShowcase() {
         <Trophy size={56} />
         <h1 className="showcase__name">AUCTION COMPLETE</h1>
         <p className="showcase__empty-text">
-          All {soldHistory.length} sales recorded. The remaining pool is empty.
+          All {soldHistory.length} sales recorded across {round} round
+          {round > 1 ? 's' : ''}. The remaining pool is empty.
         </p>
       </section>
     );
@@ -35,7 +36,10 @@ export default function PlayerShowcase() {
 
         <div className="showcase__timer">
           <Users size={14} />
-          <span>{pool.length} left in pool</span>
+          <span>
+            {round > 1 && <strong>Round {round} · </strong>}
+            {pool.length} left in pool
+          </span>
         </div>
       </header>
 

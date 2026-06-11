@@ -83,12 +83,12 @@
   color: var(--on-accent);
 }
 
-/* ── Teams dropdown trigger ─────────────────────────────────────────────── */
-.navbar__teams-wrap {
+/* ── Dropdown menu triggers (Teams + Stats) ─────────────────────────────── */
+.navbar__menu-wrap {
   position: relative;
 }
 
-.navbar__link--teams {
+.navbar__link--menu {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -297,8 +297,259 @@
   padding: 4px 0;
 }
 
+/* ── Stats dropdown panel ───────────────────────────────────────────────── */
+.stats-dropdown {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1100px, calc(100vw - 56px));
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+  z-index: 50;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: teams-dropdown-in 0.16s ease-out;
+}
+
+.stats-dropdown__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stats-dropdown__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stats-dropdown__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+
+.stats-dropdown__summary {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.stats-dropdown__close {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.stats-dropdown__close:hover {
+  background: var(--bg-panel-2);
+  color: var(--text-primary);
+}
+
+/* Filter chips */
+.stats-dropdown__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stats-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.stats-chip:hover {
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.stats-chip.is-active {
+  background: var(--accent-green-soft);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+.stats-chip__count {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+}
+
+.stats-chip.is-active .stats-chip__count {
+  background: var(--accent-green);
+  color: var(--on-accent);
+}
+
+/* Player grid */
+.stats-dropdown__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 8px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.stats-dropdown__grid::-webkit-scrollbar { width: 6px; }
+.stats-dropdown__grid::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+}
+
+.stats-dropdown__empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 20px;
+}
+
+/* Per-player row */
+.player-stat {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.player-stat:hover {
+  border-color: var(--border-bright);
+}
+
+.player-stat--live {
+  border-color: var(--accent-green);
+  background: linear-gradient(
+      90deg,
+      var(--accent-green-soft) 0%,
+      transparent 60%
+    ),
+    var(--bg-panel-2);
+}
+
+.player-stat--unsold {
+  opacity: 0.7;
+  border-style: dashed;
+}
+
+.player-stat__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg-elevated);
+}
+
+.player-stat__info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.player-stat__name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-stat__meta {
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status badge variants */
+.player-stat__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.player-stat__status--queued {
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+}
+
+.player-stat__status--live .player-stat__status-label {
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--accent-green);
+  color: var(--on-accent);
+}
+
+.player-stat__status--live .player-stat__status-amount {
+  color: var(--accent-green);
+  font-size: 12px;
+}
+
+.player-stat__status--sold .player-stat__status-team {
+  padding: 3px 6px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.player-stat__status--sold .player-stat__status-amount {
+  color: var(--accent-green);
+  font-size: 12px;
+}
+
+.player-stat__status--unsold {
+  color: var(--danger);
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
 @media (max-width: 1100px) {
   .teams-dropdown {
     width: min(640px, calc(100vw - 32px));
+  }
+  .stats-dropdown {
+    width: min(640px, calc(100vw - 32px));
+  }
+  .stats-dropdown__grid {
+    grid-template-columns: 1fr;
   }
 }
