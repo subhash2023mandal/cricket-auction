@@ -1,0 +1,92 @@
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app__layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 300px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'left center right'
+    'left queue queue';
+  gap: 20px;
+  padding: 8px 28px 28px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Each column must declare `min-height: 0` so internal scrolling kicks in. */
+.app__col-left {
+  grid-area: left;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.app__col-center {
+  grid-area: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.app__col-right {
+  grid-area: right;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+
+.app__queue {
+  grid-area: queue;
+  min-height: 0;
+}
+
+/* Subtle scrollbars on webkit browsers so the new scroll regions don't shout. */
+.app__col-left::-webkit-scrollbar,
+.app__col-right::-webkit-scrollbar,
+.app__col-center::-webkit-scrollbar {
+  width: 6px;
+}
+
+.app__col-left::-webkit-scrollbar-thumb,
+.app__col-right::-webkit-scrollbar-thumb,
+.app__col-center::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+}
+
+/* On narrow screens, stack everything and let the page itself scroll. */
+@media (max-width: 1100px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .app__layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      'left'
+      'center'
+      'right'
+      'queue';
+  }
+
+  .app__col-left,
+  .app__col-center,
+  .app__col-right {
+    overflow: visible;
+    padding-right: 0;
+  }
+}

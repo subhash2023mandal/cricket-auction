@@ -1,0 +1,173 @@
+.bidding {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bidding__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bidding__title {
+  margin-bottom: 0;
+}
+
+.bidding__next {
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.bidding__next strong {
+  color: var(--accent-green);
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* ── Team bid chips ─────────────────────────────────────────────────────── */
+.bidding__teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bidding__team {
+  --team-color: #334;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  text-align: left;
+}
+
+.bidding__team:not(:disabled):hover {
+  background: #1a2942;
+  border-color: var(--team-color);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.bidding__team:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.bidding__team:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bidding__team.is-winning {
+  background: var(--accent-green-soft);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.bidding__team-badge {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--team-color);
+  color: #fff;
+}
+
+.bidding__team.is-winning .bidding__team-badge {
+  background: var(--accent-green);
+  color: var(--on-accent);
+}
+
+.bidding__team-purse {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.bidding__team.is-winning .bidding__team-purse {
+  color: var(--accent-green);
+}
+
+/* ── Sold / Unsold actions ──────────────────────────────────────────────── */
+.bidding__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.bidding__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  transition: filter 0.15s ease, transform 0.1s ease, background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.bidding__action--sold {
+  background: var(--accent-green);
+  color: var(--on-accent);
+}
+
+.bidding__action--sold:not(:disabled):hover {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 20px rgba(0, 210, 106, 0.3);
+}
+
+.bidding__action--unsold {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+}
+
+.bidding__action--unsold:not(:disabled):hover {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: var(--danger);
+}
+
+.bidding__action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bidding__action:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────── */
+.bidding__reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  margin-top: 4px;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.bidding__reset:hover {
+  color: var(--danger);
+}

@@ -1,0 +1,211 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px;
+}
+
+.sidebar__tournament {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 6px;
+}
+
+.sidebar__tournament-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+  color: var(--accent-green);
+}
+
+.sidebar__tournament-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sidebar__tournament-season {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.sidebar__live {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-subtle);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+}
+
+.sidebar__live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 0 4px var(--accent-green-soft);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.sidebar__section-label {
+  padding-top: 4px;
+  padding-left: 4px;
+}
+
+.sidebar__wallets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Team Wallet card */
+.team-wallet {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.team-wallet__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.team-wallet__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.team-wallet__purse {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-green);
+  white-space: nowrap;
+}
+
+.team-wallet__bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.team-wallet__bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00d26a, #00a154);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.team-wallet__meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.team-wallet--organizer {
+  background: var(--bg-panel-2);
+  border-style: dashed;
+}
+
+.team-wallet--organizer .team-wallet__purse {
+  color: var(--text-secondary);
+}
+
+.team-wallet--organizer .team-wallet__bar-fill {
+  background: linear-gradient(90deg, #6b7d96, #2c3a4c);
+}
+
+/* ── Bought-players list ────────────────────────────────────────────────── */
+.team-wallet__squad {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.team-wallet__players {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Show ~3 players, then scroll inside the wallet. */
+  max-height: 90px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.team-wallet__players::-webkit-scrollbar {
+  width: 4px;
+}
+
+.team-wallet__players::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+.team-wallet__player {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.team-wallet__player-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg-elevated);
+}
+
+.team-wallet__player-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.team-wallet__player-price {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-green);
+  white-space: nowrap;
+}
+
+.team-wallet__empty {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 2px 0;
+}

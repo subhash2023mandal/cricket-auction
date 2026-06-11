@@ -1,0 +1,94 @@
+.bid-history {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bid-history__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bid-history__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-green);
+}
+
+.bid-history__live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 0 3px var(--accent-green-soft);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.bid-history__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bid-history__item {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.bid-history__item.is-current {
+  opacity: 1;
+}
+
+.bid-history__badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+.bid-history__team {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.bid-history__time {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.bid-history__amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.bid-history__item.is-current .bid-history__amount {
+  color: var(--accent-green);
+}
+
+.bid-history__empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 8px 2px;
+}
