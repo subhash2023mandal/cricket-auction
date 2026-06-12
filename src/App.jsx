@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar/Sidebar';
 import PlayerShowcase from './components/PlayerShowcase/PlayerShowcase';
 import BiddingPanel from './components/BiddingPanel/BiddingPanel';
 import BidHistory from './components/BidHistory/BidHistory';
+import TopBids from './components/TopBids/TopBids';
 import NextPlayersQueue from './components/NextPlayersQueue/NextPlayersQueue';
 import './App.css';
 
@@ -23,6 +24,7 @@ export default function App() {
         <aside className="app__col-right">
           <BiddingPanel />
           <BidHistory />
+          <TopBids />
         </aside>
 
         <div className="app__queue">

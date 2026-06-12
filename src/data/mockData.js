@@ -2,8 +2,8 @@
 // All live auction data (players, teams, bids, sales) lives in AuctionContext.
 
 export const tournament = {
-  name: 'IPL 2024',
-  season: 'Season 17 • Live Auction',
+  name: 'VPL 2026',
+  season: 'Season 02 • Live Auction',
 };
 
 export const navItems = [

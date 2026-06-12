@@ -43,6 +43,10 @@ export default function PlayerShowcase() {
         </div>
       </header>
 
+      {p.funFact && (
+        <p className="showcase__funfact">“{p.funFact}”</p>
+      )}
+
       <div className="showcase__body">
         <div className="showcase__player-image">
           <div className="showcase__player-image-ring">

@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <div className="navbar__brand">CRICKET PULSE</div>
+      <div className="navbar__brand">VOLT CRICKET PULSE</div>
 
       <nav className="navbar__links" aria-label="Primary">
         {navItems.map((item) => {
