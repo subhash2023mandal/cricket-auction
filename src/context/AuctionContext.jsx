@@ -2,6 +2,27 @@ import { createContext, useContext, useEffect, useMemo, useReducer } from 'react
 import { players as allPlayers } from '../data/players';
 import { load, save, reset as resetStorage, STORAGE_VERSION } from '../utils/storage';
 import { shuffle, nextBidAmount } from '../utils/auction';
+import {
+  applyBall,
+  applyToss,
+  canScore,
+  completeMatch,
+  ensureBatters,
+  finalizeMatchIfDone,
+  getBallType,
+  makeMatch,
+  refreshFreshLineups,
+  renameBatterInInnings,
+  renameBowlerInInnings,
+  resolveKnockouts,
+  retireBatterInInnings,
+  seedMatches,
+  setBowlerInInnings,
+  setNextBatterInInnings,
+  setOpenersInInnings,
+  swapStrikeInInnings,
+  undoBall,
+} from '../utils/match';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 const TEAMS = [
@@ -68,34 +89,110 @@ function advanceAfterAction({ pool, teams, round }) {
 export function seedState() {
   const shuffled = shuffle(allPlayers);
   const [first, ...rest] = shuffled;
+  const teams = [
+    ...TEAMS.map((t) => ({
+      ...t,
+      initialPurseLakh: INITIAL_PURSE_LAKH,
+      purseLakh: INITIAL_PURSE_LAKH,
+      squad: [],
+      maxSquad: SQUAD_LIMIT,
+      isOrganizer: false,
+    })),
+    {
+      id: ORGANIZER_ID,
+      name: 'Unsold Pool',
+      short: 'ORG',
+      initialPurseLakh: 0,
+      purseLakh: 0,
+      squad: [],
+      maxSquad: allPlayers.length,
+      isOrganizer: true,
+    },
+  ];
   return {
     version: STORAGE_VERSION,
     round: 1,
     pool: rest,
     current: newCurrentFrom(first),
-    teams: [
-      ...TEAMS.map((t) => ({
-        ...t,
-        initialPurseLakh: INITIAL_PURSE_LAKH,
-        purseLakh: INITIAL_PURSE_LAKH,
-        squad: [],
-        maxSquad: SQUAD_LIMIT,
-        isOrganizer: false,
-      })),
-      {
-        id: ORGANIZER_ID,
-        name: 'Unsold Pool',
-        short: 'ORG',
-        initialPurseLakh: 0,
-        purseLakh: 0,
-        squad: [],
-        maxSquad: allPlayers.length,
-        isOrganizer: true,
-      },
-    ],
+    teams,
     bidHistory: [],
     soldHistory: [],
+    matches: seedMatches(teams),
   };
+}
+
+// Backfill missing slices when loading older persisted state so saved auctions
+// (and saved match scoring) survive across feature additions.
+function migrate(loaded) {
+  let next = loaded;
+  if (!Array.isArray(next.matches) || next.matches.length === 0) {
+    next = { ...next, matches: seedMatches(next.teams) };
+  }
+  // Backfill any structural fields that older saved states might be missing
+  // (stage, day, seedTeam1, seedTeam2, group, name) by aligning each match
+  // with the canonical fixture template by id. Live scoring data is preserved.
+  const canonical = seedMatches(next.teams);
+  const canonicalById = Object.fromEntries(canonical.map((m) => [m.id, m]));
+  next = {
+    ...next,
+    matches: next.matches.map((m) => {
+      const canon = canonicalById[m.id];
+      if (!canon) return m;
+      const stage = m.stage ?? canon.stage;
+      // A group match that was saved with no team IDs (older buggy state) is
+      // effectively a blank slate — just replace it with the canonical entry so
+      // its innings, lineups and seed data are all consistent.
+      const hasNeverScored =
+        m.status !== 'completed' &&
+        m.status !== 'live' &&
+        !m.startedAt &&
+        (m.innings ?? []).every((inn) => (inn?.deliveries?.length ?? 0) === 0);
+      if (
+        stage === 'group' &&
+        canon.team1Id &&
+        canon.team2Id &&
+        (!m.team1Id || !m.team2Id) &&
+        hasNeverScored
+      ) {
+        return { ...canon, startTimeAt: m.startTimeAt ?? null };
+      }
+      return {
+        ...m,
+        stage,
+        group: m.group ?? canon.group,
+        name: m.name || canon.name,
+        // Always pull the day/seed from the canonical schedule so historical
+        // off-by-one fixtures get aligned (e.g. final used to be on day 4).
+        day: canon.day,
+        seedTeam1: m.seedTeam1 ?? canon.seedTeam1 ?? null,
+        seedTeam2: m.seedTeam2 ?? canon.seedTeam2 ?? null,
+      };
+    }),
+  };
+  // Add any matches that exist in the canonical fixture but are missing from
+  // saved state (e.g. older saves that didn't include knockouts).
+  const knownIds = new Set(next.matches.map((m) => m.id));
+  const missing = canonical.filter((m) => !knownIds.has(m.id));
+  if (missing.length > 0) {
+    next = { ...next, matches: [...next.matches, ...missing] };
+  }
+
+  const teamLookup = (id) => next.teams.find((t) => t.id === id);
+  next = {
+    ...next,
+    matches: next.matches.map((m) => ensureBatters(m, teamLookup)),
+  };
+  // Knockout team IDs may need to be (re)populated based on current state.
+  next = { ...next, matches: resolveKnockouts(next.matches, next.teams) };
+  return next;
+}
+
+function updateMatch(state, matchId, updater) {
+  const matches = state.matches.map((m) => (m.id === matchId ? updater(m) : m));
+  // After every match mutation we re-run the knockout resolver so semis pick
+  // up the latest group standings, and the final picks up the latest semi
+  // winners. The resolver is a no-op for matches that already have scoring.
+  return { ...state, matches: resolveKnockouts(matches, state.teams) };
 }
 
 // ─── Reducer ────────────────────────────────────────────────────────────────
@@ -162,6 +259,7 @@ function reducer(state, action) {
       return {
         ...state,
         ...next,
+        matches: refreshFreshLineups(state.matches, next.teams),
         bidHistory: [],
         soldHistory: [
           ...state.soldHistory,
@@ -200,12 +298,217 @@ function reducer(state, action) {
       return {
         ...state,
         ...next,
+        matches: refreshFreshLineups(state.matches, next.teams),
         bidHistory: [],
       };
     }
 
     case 'RESHUFFLE_POOL': {
       return { ...state, pool: shuffle(state.pool) };
+    }
+
+    case 'MATCH_BALL': {
+      const ballType = getBallType(action.ballTypeId);
+      if (!ballType) return state;
+      const teamLookup = (id) => state.teams.find((t) => t.id === id);
+      return updateMatch(state, action.matchId, (m) => {
+        if (m.status === 'completed') return m;
+        if (!m.team1Id || !m.team2Id) return m; // knockout not yet decided
+        const idx = m.currentInnings;
+        const innings = m.innings[idx];
+        if (!canScore(innings)) return m;
+        const nextInnings = applyBall(innings, ballType);
+        const updated = {
+          ...m,
+          status: m.status === 'upcoming' ? 'live' : m.status,
+          startedAt: m.startedAt ?? Date.now(),
+          innings: m.innings.map((inn, i) => (i === idx ? nextInnings : inn)),
+        };
+        return finalizeMatchIfDone(updated, teamLookup);
+      });
+    }
+
+    case 'MATCH_SET_START_TIME': {
+      return updateMatch(state, action.matchId, (m) => ({
+        ...m,
+        startTimeAt: action.time || null,
+      }));
+    }
+
+    case 'MATCH_SET_TOSS': {
+      const teamLookup = (id) => state.teams.find((t) => t.id === id);
+      return updateMatch(state, action.matchId, (m) =>
+        applyToss(m, action.tossWinnerId, action.decision, teamLookup),
+      );
+    }
+
+    case 'MATCH_CLEAR_TOSS': {
+      return updateMatch(state, action.matchId, (m) => {
+        // Only allow clearing if the match hasn't started.
+        const started = m.innings.some(
+          (inn) =>
+            (inn.deliveries?.length ?? 0) > 0 ||
+            inn.openersSet ||
+            inn.currentBowlerId != null,
+        );
+        if (started) return m;
+        return { ...m, tossWinnerId: null, tossDecision: null };
+      });
+    }
+
+    case 'MATCH_SET_OPENERS': {
+      return updateMatch(state, action.matchId, (m) => {
+        const idx = m.currentInnings;
+        const inn = m.innings[idx];
+        if (inn.openersSet) return m;
+        const next = setOpenersInInnings(
+          inn,
+          action.strikerId,
+          action.nonStrikerId,
+        );
+        if (next === inn) return m;
+        return {
+          ...m,
+          innings: m.innings.map((i, ix) => (ix === idx ? next : i)),
+        };
+      });
+    }
+
+    case 'MATCH_SET_NEXT_BATTER': {
+      return updateMatch(state, action.matchId, (m) => {
+        const idx = m.currentInnings;
+        const inn = m.innings[idx];
+        const next = setNextBatterInInnings(inn, action.batterId);
+        if (next === inn) return m;
+        return {
+          ...m,
+          innings: m.innings.map((i, ix) => (ix === idx ? next : i)),
+        };
+      });
+    }
+
+    case 'MATCH_RETIRE_BATTER': {
+      return updateMatch(state, action.matchId, (m) => {
+        const idx = m.currentInnings;
+        const inn = m.innings[idx];
+        const next = retireBatterInInnings(inn, action.batterId);
+        if (next === inn) return m;
+        return {
+          ...m,
+          innings: m.innings.map((i, ix) => (ix === idx ? next : i)),
+        };
+      });
+    }
+
+    case 'MATCH_SET_BOWLER': {
+      return updateMatch(state, action.matchId, (m) => {
+        const idx = m.currentInnings;
+        const inn = m.innings[idx];
+        const next = setBowlerInInnings(inn, action.bowlerId);
+        if (next === inn) return m;
+        return {
+          ...m,
+          innings: m.innings.map((i, ix) => (ix === idx ? next : i)),
+        };
+      });
+    }
+
+    case 'MATCH_RENAME_BOWLER': {
+      const { matchId, inningsIdx, bowlerId, name } = action;
+      return updateMatch(state, matchId, (m) => ({
+        ...m,
+        innings: m.innings.map((inn, i) =>
+          i === inningsIdx ? renameBowlerInInnings(inn, bowlerId, name) : inn,
+        ),
+      }));
+    }
+
+    case 'MATCH_UNDO': {
+      return updateMatch(state, action.matchId, (m) => {
+        const idx = m.currentInnings;
+        const innings = m.innings[idx];
+        if (innings.deliveries.length === 0) return m;
+        const reverted = undoBall(innings);
+        return {
+          ...m,
+          status: m.status === 'completed' ? 'live' : m.status,
+          result: null,
+          finishedAt: null,
+          winnerTeamId: null,
+          innings: m.innings.map((inn, i) => (i === idx ? reverted : inn)),
+        };
+      });
+    }
+
+    case 'MATCH_END_INNINGS': {
+      const teamLookup = (id) => state.teams.find((t) => t.id === id);
+      return updateMatch(state, action.matchId, (m) => {
+        if (m.status === 'completed') return m;
+        if (!m.team1Id || !m.team2Id) return m;
+        const idx = m.currentInnings;
+        const closed = { ...m.innings[idx], closed: true };
+        const innings = m.innings.map((inn, i) => (i === idx ? closed : inn));
+        const updated = {
+          ...m,
+          status: m.status === 'upcoming' ? 'live' : m.status,
+          startedAt: m.startedAt ?? Date.now(),
+          innings,
+        };
+        if (idx === 0) {
+          return { ...updated, currentInnings: 1 };
+        }
+        return completeMatch(updated, teamLookup);
+      });
+    }
+
+    case 'MATCH_RESET': {
+      return updateMatch(state, action.matchId, (m) => {
+        const t1 = m.team1Id ? state.teams.find((t) => t.id === m.team1Id) : null;
+        const t2 = m.team2Id ? state.teams.find((t) => t.id === m.team2Id) : null;
+        return makeMatch({
+          id: m.id,
+          stage: m.stage,
+          group: m.group,
+          day: m.day,
+          name: m.name,
+          // Knockouts go back to placeholder mode so the resolver can repopulate
+          // them with the latest source standings.
+          team1Id: m.stage === 'group' ? m.team1Id : null,
+          team2Id: m.stage === 'group' ? m.team2Id : null,
+          seedTeam1: m.seedTeam1,
+          seedTeam2: m.seedTeam2,
+          oversLimit: m.oversLimit,
+          team1Squad: t1?.squad ?? [],
+          team2Squad: t2?.squad ?? [],
+          team1Short: t1?.short,
+          team2Short: t2?.short,
+        });
+      });
+    }
+
+    case 'MATCH_RENAME_BATTER': {
+      const { matchId, inningsIdx, batterId, name } = action;
+      return updateMatch(state, matchId, (m) => ({
+        ...m,
+        innings: m.innings.map((inn, i) =>
+          i === inningsIdx ? renameBatterInInnings(inn, batterId, name) : inn,
+        ),
+      }));
+    }
+
+    case 'MATCH_SWAP_STRIKE': {
+      return updateMatch(state, action.matchId, (m) => {
+        if (m.status === 'completed') return m;
+        const idx = m.currentInnings;
+        const inn = m.innings[idx];
+        if (inn.closed) return m;
+        return {
+          ...m,
+          innings: m.innings.map((i, ix) =>
+            ix === idx ? swapStrikeInInnings(i) : i,
+          ),
+        };
+      });
     }
 
     case 'RESET': {
@@ -222,7 +525,8 @@ const AuctionContext = createContext(null);
 
 export function AuctionProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, null, () => {
-    return load() ?? seedState();
+    const loaded = load();
+    return loaded ? migrate(loaded) : seedState();
   });
 
   // Persist on every state change.
@@ -241,7 +545,56 @@ export function AuctionProvider({ children }) {
         dispatch({ type: 'RESET' });
       },
     };
-    return { state, actions };
+    const matchActions = {
+      recordBall: (matchId, ballTypeId) =>
+        dispatch({ type: 'MATCH_BALL', matchId, ballTypeId }),
+      undoBall: (matchId) => dispatch({ type: 'MATCH_UNDO', matchId }),
+      endInnings: (matchId) => dispatch({ type: 'MATCH_END_INNINGS', matchId }),
+      resetMatch: (matchId) => dispatch({ type: 'MATCH_RESET', matchId }),
+      swapStrike: (matchId) =>
+        dispatch({ type: 'MATCH_SWAP_STRIKE', matchId }),
+      renameBatter: (matchId, inningsIdx, batterId, name) =>
+        dispatch({
+          type: 'MATCH_RENAME_BATTER',
+          matchId,
+          inningsIdx,
+          batterId,
+          name,
+        }),
+      setMatchStartTime: (matchId, time) =>
+        dispatch({ type: 'MATCH_SET_START_TIME', matchId, time }),
+      setToss: (matchId, tossWinnerId, decision) =>
+        dispatch({
+          type: 'MATCH_SET_TOSS',
+          matchId,
+          tossWinnerId,
+          decision,
+        }),
+      clearToss: (matchId) =>
+        dispatch({ type: 'MATCH_CLEAR_TOSS', matchId }),
+      setOpeners: (matchId, strikerId, nonStrikerId) =>
+        dispatch({
+          type: 'MATCH_SET_OPENERS',
+          matchId,
+          strikerId,
+          nonStrikerId,
+        }),
+      setNextBatter: (matchId, batterId) =>
+        dispatch({ type: 'MATCH_SET_NEXT_BATTER', matchId, batterId }),
+      retireBatter: (matchId, batterId) =>
+        dispatch({ type: 'MATCH_RETIRE_BATTER', matchId, batterId }),
+      setBowler: (matchId, bowlerId) =>
+        dispatch({ type: 'MATCH_SET_BOWLER', matchId, bowlerId }),
+      renameBowler: (matchId, inningsIdx, bowlerId, name) =>
+        dispatch({
+          type: 'MATCH_RENAME_BOWLER',
+          matchId,
+          inningsIdx,
+          bowlerId,
+          name,
+        }),
+    };
+    return { state, actions, matchActions };
   }, [state]);
 
   return (

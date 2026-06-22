@@ -4,6 +4,7 @@ import { useAuction } from '../../context/AuctionContext';
 import { navItems } from '../../data/mockData';
 import TeamsDropdown from './TeamsDropdown';
 import StatsDropdown from './StatsDropdown';
+import TournamentOverlay from '../Tournament/TournamentOverlay';
 import './Navbar.css';
 
 const MENUS = {
@@ -15,6 +16,8 @@ export default function Navbar() {
   const { actions } = useAuction();
   // Which dropdown is open: 'teams' | 'stats' | null. Only one at a time.
   const [openMenu, setOpenMenu] = useState(null);
+  // Full-screen tournament overlay (triggered by the Tournaments nav item).
+  const [tournamentOpen, setTournamentOpen] = useState(false);
   const wrapRefs = useRef({});
 
   // Outside click closes whatever's open.
@@ -32,10 +35,24 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <div className="navbar__brand">VOLT CRICKET PULSE</div>
+      <div style={{ fontSize: '24px', fontWeight: 'bold' }} className="navbar__brand">VOLT PREMIER LEAGUE</div>
 
       <nav className="navbar__links" aria-label="Primary">
         {navItems.map((item) => {
+          if (item.id === 'tournaments') {
+            return (
+              <button
+                key={item.id}
+                className={`navbar__link ${tournamentOpen ? 'is-active' : ''}`}
+                onClick={() => setTournamentOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={tournamentOpen}
+              >
+                {item.label}
+              </button>
+            );
+          }
+
           const Menu = MENUS[item.id];
           if (!Menu) {
             return (
@@ -102,6 +119,10 @@ export default function Navbar() {
           <span>S</span>
         </div>
       </div>
+
+      {tournamentOpen && (
+        <TournamentOverlay onClose={() => setTournamentOpen(false)} />
+      )}
     </header>
   );
 }
