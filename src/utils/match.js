@@ -24,8 +24,8 @@ const LINEUP_SIZE = 11; // T20 playing XI
 
 // ─── Tournament constants ──────────────────────────────────────────────────
 export const GROUPS = [
-  { id: 'A', name: 'Group A', teamIds: ['kkr', 'mi', 'csk'] },
-  { id: 'B', name: 'Group B', teamIds: ['rcb', 'srh', 'dc'] },
+  { id: 'A', name: 'Group A', teamIds: ['vv', 'tt', 'ss'] },
+  { id: 'B', name: 'Group B', teamIds: ['pp', 'cs', 'nk'] },
 ];
 
 // ─── Ball types (keypad buttons) ───────────────────────────────────────────

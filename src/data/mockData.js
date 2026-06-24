@@ -15,11 +15,11 @@ export const navItems = [
 ];
 
 export const teamColors = {
-  KKR: '#5c1f8c',
-  MI: '#1b4ea0',
-  CSK: '#f2c12d',
-  RCB: '#c8202b',
-  SRH: '#e07a1e',
-  DC: '#1f4eb2',
+  VV: '#16a34a', // Voltage Vipers — electric green
+  TT: '#eab308', // Thunder Titans — gold
+  SS: '#dc2626', // Surge Strikers — surge red
+  PP: '#7c3aed', // Plasma Panthers — plasma purple
+  CS: '#f97316', // Circuit Spartans — circuit orange
+  NK: '#06b6d4', // Neon Knights — neon cyan
   ORG: '#475569',
 };

@@ -26,17 +26,30 @@ import {
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 const TEAMS = [
-  { id: 'kkr', name: 'Kolkata Knight Riders', short: 'KKR' },
-  { id: 'mi',  name: 'Mumbai Indians',         short: 'MI'  },
-  { id: 'csk', name: 'Chennai Super Kings',    short: 'CSK' },
-  { id: 'rcb', name: 'Royal Challengers',      short: 'RCB' },
-  { id: 'srh', name: 'Sunrisers Hyderabad',    short: 'SRH' },
-  { id: 'dc',  name: 'Delhi Capitals',         short: 'DC'  },
+  { id: 'vv', name: 'Voltage Vipers',     short: 'VV' },
+  { id: 'tt', name: 'Thunder Titans',     short: 'TT' },
+  { id: 'ss', name: 'Surge Strikers',     short: 'SS' },
+  { id: 'pp', name: 'Plasma Panthers',    short: 'PP' },
+  { id: 'cs', name: 'Circuit Spartans',   short: 'CS' },
+  { id: 'nk', name: 'Neon Knights',       short: 'NK' },
 ];
 const ORGANIZER_ID = 'organizer';
 const INITIAL_PURSE_LAKH = 10000; // 100 Cr per franchise
-const SQUAD_LIMIT = 9;
+const SQUAD_LIMIT = 11;
 const MAX_BID_HISTORY = 4;
+
+// One player per franchise is pre-allocated before the live auction starts.
+// Each is recorded as a ₹5 Cr (500 L) sale: added to the team's squad,
+// deducted from the purse, and listed in soldHistory.
+const PREASSIGNED_SALE_LAKH = 500;
+const PREASSIGNMENTS = [
+  { teamId: 'vv', playerId: 'p036' }, // Voltage Vipers   → Parvez Khandakar
+  { teamId: 'tt', playerId: 'p021' }, // Thunder Titans   → Madhav (Madhavendra)
+  { teamId: 'ss', playerId: 'p018' }, // Surge Strikers   → Debesh Pattanaik
+  { teamId: 'pp', playerId: 'p012' }, // Plasma Panthers  → Harsh Mani Tripathi
+  { teamId: 'cs', playerId: 'p005' }, // Circuit Spartans → Amit Pandey (Amit Kumar Pandey)
+  { teamId: 'nk', playerId: 'p050' }, // Neon Knights     → Vaibhav Arora
+];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 function newCurrentFrom(player) {
@@ -87,17 +100,37 @@ function advanceAfterAction({ pool, teams, round }) {
 
 // ─── Initial / seed state ───────────────────────────────────────────────────
 export function seedState() {
-  const shuffled = shuffle(allPlayers);
+  const now = Date.now();
+  const playerById = Object.fromEntries(allPlayers.map((p) => [p.id, p]));
+
+  // Resolve the pre-assignments into concrete player records, skipping any
+  // entry whose player id no longer exists (defensive against roster edits).
+  const resolvedPre = PREASSIGNMENTS
+    .map((p) => ({ ...p, player: playerById[p.playerId] }))
+    .filter((p) => p.player);
+  const preassignedIds = new Set(resolvedPre.map((p) => p.playerId));
+  const preByTeam = Object.fromEntries(resolvedPre.map((p) => [p.teamId, p]));
+
+  // Pool excludes the pre-assigned players.
+  const remaining = allPlayers.filter((p) => !preassignedIds.has(p.id));
+  const shuffled = shuffle(remaining);
   const [first, ...rest] = shuffled;
+
   const teams = [
-    ...TEAMS.map((t) => ({
-      ...t,
-      initialPurseLakh: INITIAL_PURSE_LAKH,
-      purseLakh: INITIAL_PURSE_LAKH,
-      squad: [],
-      maxSquad: SQUAD_LIMIT,
-      isOrganizer: false,
-    })),
+    ...TEAMS.map((t) => {
+      const pre = preByTeam[t.id];
+      const squad = pre
+        ? [{ ...pre.player, soldPriceLakh: PREASSIGNED_SALE_LAKH, soldAt: now }]
+        : [];
+      return {
+        ...t,
+        initialPurseLakh: INITIAL_PURSE_LAKH,
+        purseLakh: INITIAL_PURSE_LAKH - (pre ? PREASSIGNED_SALE_LAKH : 0),
+        squad,
+        maxSquad: SQUAD_LIMIT,
+        isOrganizer: false,
+      };
+    }),
     {
       id: ORGANIZER_ID,
       name: 'Unsold Pool',
@@ -109,6 +142,15 @@ export function seedState() {
       isOrganizer: true,
     },
   ];
+
+  const soldHistory = resolvedPre.map((p) => ({
+    playerId: p.player.id,
+    playerName: p.player.name,
+    teamId: p.teamId,
+    priceLakh: PREASSIGNED_SALE_LAKH,
+    timestamp: now,
+  }));
+
   return {
     version: STORAGE_VERSION,
     round: 1,
@@ -116,7 +158,7 @@ export function seedState() {
     current: newCurrentFrom(first),
     teams,
     bidHistory: [],
-    soldHistory: [],
+    soldHistory,
     matches: seedMatches(teams),
   };
 }
@@ -125,6 +167,18 @@ export function seedState() {
 // (and saved match scoring) survive across feature additions.
 function migrate(loaded) {
   let next = loaded;
+  // Lift any team that's still on an older squad cap up to the current
+  // SQUAD_LIMIT (without wiping any picks they've already made).
+  if (Array.isArray(next.teams)) {
+    next = {
+      ...next,
+      teams: next.teams.map((t) =>
+        t.isOrganizer || t.maxSquad >= SQUAD_LIMIT
+          ? t
+          : { ...t, maxSquad: SQUAD_LIMIT },
+      ),
+    };
+  }
   if (!Array.isArray(next.matches) || next.matches.length === 0) {
     next = { ...next, matches: seedMatches(next.teams) };
   }

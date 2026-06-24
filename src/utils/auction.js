@@ -19,14 +19,12 @@ export function parseLakhFromBaseString(str) {
   return m[2] === 'cr' ? Math.round(n * 100) : Math.round(n);
 }
 
-// IPL-style minimum bid increments (all in Lakh).
+// Bid increments (in Lakh):
+//   • Under ₹2 Cr  → +30 L per bid
+//   • At/above ₹2 Cr → +50 L per bid
 export function nextBidIncrement(currentLakh) {
-  if (currentLakh < 50)   return 5;
-  if (currentLakh < 100)  return 10;
-  if (currentLakh < 200)  return 20;
-  if (currentLakh < 500)  return 25;
-  if (currentLakh < 1000) return 50;
-  return 100;
+  if (currentLakh < 200) return 30;
+  return 50;
 }
 
 // The amount a team would bid right now: base price if no one has bid yet,
