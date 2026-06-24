@@ -12,7 +12,9 @@
 //   • Everyone else gets a deterministic bucket between ₹50 L and ₹2 Cr,
 //     keyed by the player's id so prices are stable across reloads.
 
-const localImage = (id) => `/players/${id}.jpg`;
+// BASE_URL is '/' in dev and '/cricket-auction/' on GitHub Pages, so the same
+// asset path works locally and after `npm run deploy`.
+const localImage = (id) => `${import.meta.env.BASE_URL}players/${id}.jpg`;
 
 const PREMIUM_BASE_LAKH = 200; // 2 Cr
 const PREMIUM_IDS = new Set(['p033', 'p048', 'p049']);

@@ -623,7 +623,7 @@ export function AuctionProvider({ children }) {
             ? `${basePriceLakh} L`
             : `${Number.isInteger(basePriceLakh / 100) ? basePriceLakh / 100 : (basePriceLakh / 100).toFixed(2)} Cr`,
           basePriceLakh,
-          imageUrl: String(input.imageUrl || '').trim() || `/players/${id}.jpg`,
+          imageUrl: String(input.imageUrl || '').trim() || `${import.meta.env.BASE_URL}players/${id}.jpg`,
           funFact: '',
         };
         dispatch({ type: 'ADD_PLAYER', player });
