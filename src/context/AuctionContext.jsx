@@ -34,8 +34,8 @@ const TEAMS = [
   { id: 'dc',  name: 'Delhi Capitals',         short: 'DC'  },
 ];
 const ORGANIZER_ID = 'organizer';
-const INITIAL_PURSE_LAKH = 25000; // 250 Cr per franchise
-const SQUAD_LIMIT = 15;
+const INITIAL_PURSE_LAKH = 10000; // 100 Cr per franchise
+const SQUAD_LIMIT = 9;
 const MAX_BID_HISTORY = 4;
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -307,6 +307,19 @@ function reducer(state, action) {
       return { ...state, pool: shuffle(state.pool) };
     }
 
+    // Slot a brand-new player into the auction at runtime. If there's no live
+    // bidding and the queue is empty, they become the current player; otherwise
+    // they jump to the front of the pool so they're next up after the current
+    // sale closes.
+    case 'ADD_PLAYER': {
+      const { player } = action;
+      if (!player || !player.id) return state;
+      if (!state.current && state.pool.length === 0) {
+        return { ...state, current: newCurrentFrom(player), bidHistory: [] };
+      }
+      return { ...state, pool: [player, ...state.pool] };
+    }
+
     case 'MATCH_BALL': {
       const ballType = getBallType(action.ballTypeId);
       if (!ballType) return state;
@@ -540,6 +553,27 @@ export function AuctionProvider({ children }) {
       markSold: () => dispatch({ type: 'SOLD' }),
       markUnsold: () => dispatch({ type: 'UNSOLD' }),
       reshufflePool: () => dispatch({ type: 'RESHUFFLE_POOL' }),
+      addPlayer: (input) => {
+        const name = String(input.name || '').trim();
+        if (!name) return;
+        const basePriceLakh = Math.max(1, Math.round(Number(input.basePriceLakh) || 50));
+        const role = ['BAT', 'BOWL', 'AR', 'WK'].includes(input.role) ? input.role : 'BAT';
+        const id = `p_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+        const player = {
+          id,
+          name,
+          role,
+          country: String(input.country || 'India').trim() || 'India',
+          tags: ['Uncapped', 'Indian'],
+          base: basePriceLakh < 100
+            ? `${basePriceLakh} L`
+            : `${Number.isInteger(basePriceLakh / 100) ? basePriceLakh / 100 : (basePriceLakh / 100).toFixed(2)} Cr`,
+          basePriceLakh,
+          imageUrl: String(input.imageUrl || '').trim() || `/players/${id}.jpg`,
+          funFact: '',
+        };
+        dispatch({ type: 'ADD_PLAYER', player });
+      },
       resetAuction: () => {
         resetStorage();
         dispatch({ type: 'RESET' });

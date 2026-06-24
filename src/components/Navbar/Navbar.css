@@ -71,6 +71,15 @@
   color: var(--text-primary);
 }
 
+.navbar__icon-btn--accent {
+  color: var(--accent);
+}
+
+.navbar__icon-btn--accent:hover {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
 .navbar__avatar {
   width: 32px;
   height: 32px;

@@ -1,57 +1,126 @@
+// Auction pool — local roster (66 entries, deduped from the source list).
+// IDs are intentionally stable (gaps like p022/p038/p039/p042/p043/p045/p046
+// remain so that any photos already at `public/players/{id}.jpg` stay aligned to
+// the canonical id). New names continue from p051.
+//
+// `imageUrl` points to `public/players/{id}.jpg`. Drop a matching file in
+// that folder and it appears automatically. If the file is missing, the
+// PlayerAvatar component falls back to a deterministic i.pravatar.cc avatar.
+//
+// Base price rules (auction is decided by bids on top of the base):
+//   • Premium picks (Subhash Mandal, Ankit Agarwal, Lalit Bihani) → ₹2 Cr.
+//   • Everyone else gets a deterministic bucket between ₹50 L and ₹2 Cr,
+//     keyed by the player's id so prices are stable across reloads.
 
 const localImage = (id) => `/players/${id}.jpg`;
 
-export const players = [
-  { id: 'p001', name: 'Ashik Krishnan',       role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p001'), funFact: '' },
-  { id: 'p002', name: 'Soham Sahajwani',      role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p002'), funFact: '' },
-  { id: 'p003', name: 'Priyesh Agrawal',      role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p003'), funFact: '' },
-  { id: 'p004', name: 'Anmol Verma',          role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p004'), funFact: '' },
-  { id: 'p005', name: 'Amit Pandey',          role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p005'), funFact: '' },
-  { id: 'p006', name: 'Ranjithkumar G',       role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p006'), funFact: '' },
-  { id: 'p007', name: 'Mayank Kriparam',      role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p007'), funFact: '' },
-  { id: 'p008', name: 'Ashutosh',             role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p008'), funFact: '' },
-  { id: 'p009', name: 'Arpit Luniya',         role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p009'), funFact: '' },
-  { id: 'p010', name: 'Mahesh Reddy',         role: 'WK',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p010'), funFact: '' },
-  { id: 'p011', name: 'Dhruv Dubey',          role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p011'), funFact: '' },
-  { id: 'p012', name: 'Harsh Mani Tripathi',  role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p012'), funFact: '' },
-  { id: 'p013', name: 'Abhishek Singh',       role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p013'), funFact: '' },
-  { id: 'p014', name: 'Pratyush Tiwari',      role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p014'), funFact: '' },
-  { id: 'p015', name: 'Nishant Yadav',        role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p015'), funFact: '' },
-  { id: 'p016', name: 'Jasdeep Juneja',       role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p016'), funFact: '' },
-  { id: 'p017', name: 'Syed Afrid',           role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p017'), funFact: '' },
-  { id: 'p018', name: 'Debesh Pattanaik',     role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p018'), funFact: '' },
-  { id: 'p019', name: 'Ananta Roy',           role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p019'), funFact: '' },
-  { id: 'p020', name: 'Shivam Gupta',         role: 'WK',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p020'), funFact: '' },
-  { id: 'p021', name: 'Madhav',               role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p021'), funFact: '' },
-  { id: 'p022', name: 'Amit',                 role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p022'), funFact: '' },
-  { id: 'p023', name: 'Anshu Kumar',          role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p023'), funFact: '' },
-  { id: 'p024', name: 'Vivek',                role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p024'), funFact: '' },
-  { id: 'p025', name: 'Asit',                 role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p025'), funFact: '' },
-  { id: 'p026', name: 'Amit',                 role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p026'), funFact: '' },
-  { id: 'p027', name: 'Shankar Vyas',         role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p027'), funFact: '' },
-  { id: 'p028', name: 'Akshay',               role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p028'), funFact: '' },
-  { id: 'p029', name: 'Swarabharavi Ulaya',   role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p029'), funFact: '' },
-  { id: 'p030', name: 'Suhaib Rayyan',        role: 'WK',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p030'), funFact: '' },
-  { id: 'p031', name: 'Anish Kumar',          role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p031'), funFact: '' },
-  { id: 'p032', name: 'Vishal Jain',          role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p032'), funFact: '' },
-  { id: 'p033', name: 'Subhash Mandal',       role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p033'), funFact: '' },
-  { id: 'p034', name: 'Vidya Sagar',          role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p034'), funFact: '' },
-  { id: 'p035', name: 'Johnson Pinto',        role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p035'), funFact: '' },
-  { id: 'p036', name: 'Parvez Khandakar',     role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p036'), funFact: '' },
-  { id: 'p037', name: 'Akash Thakur',         role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p037'), funFact: '' },
-  { id: 'p038', name: 'Swarabharavi Ulaya',   role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p038'), funFact: '' },
-  { id: 'p039', name: 'Anish Kumar',          role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p039'), funFact: '' },
-  { id: 'p040', name: 'Nishant Kumar',        role: 'WK',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p040'), funFact: '' },
-  { id: 'p041', name: 'Ananta Ray',           role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p041'), funFact: '' },
-  { id: 'p042', name: 'Suhaib Rayyan',        role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p042'), funFact: '' },
-  { id: 'p043', name: 'Amit',                 role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p043'), funFact: '' },
-  { id: 'p044', name: 'Bikash Jena',          role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p044'), funFact: '' },
-  { id: 'p045', name: 'Shankar Vyas',         role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p045'), funFact: '' },
-  { id: 'p046', name: 'Akshay',               role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p046'), funFact: '' },
-  { id: 'p047', name: 'Abhijit Taware',       role: 'BAT',  country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p047'), funFact: '' },
-  { id: 'p048', name: 'Ankit Agarwal',        role: 'BOWL', country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p048'), funFact: '' },
-  { id: 'p049', name: 'Lalit Bihani',         role: 'AR',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p049'), funFact: '' },
-  { id: 'p050', name: 'Vaibhav Arora',        role: 'WK',   country: 'India', tags: ['Uncapped', 'Indian'], base: '50 L', basePriceLakh: 50, imageUrl: localImage('p050'), funFact: '' },
+const PREMIUM_BASE_LAKH = 200; // 2 Cr
+const PREMIUM_IDS = new Set(['p033', 'p048', 'p049']);
+const BASE_BUCKETS_LAKH = [50, 75, 100, 125, 150, 175, 200];
+
+// Tiny string hash → keeps each id's bucket fixed instead of changing on
+// every reload (which a Math.random() would do).
+function hashId(id) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function basePriceFor(id) {
+  if (PREMIUM_IDS.has(id)) return PREMIUM_BASE_LAKH;
+  return BASE_BUCKETS_LAKH[hashId(id) % BASE_BUCKETS_LAKH.length];
+}
+
+function formatBase(lakh) {
+  if (lakh < 100) return `${lakh} L`;
+  const cr = lakh / 100;
+  return `${Number.isInteger(cr) ? cr : cr.toFixed(2)} Cr`;
+}
+
+
+const ROSTER = [
+  ['p001', 'Ashik Krishnan',        'BAT'],
+  ['p002', 'Soham Sahajwani',       'BOWL'],
+  ['p003', 'Priyesh Agrawal',       'AR'],
+  ['p004', 'Anmol Verma',           'BAT'],
+  ['p005', 'Amit Pandey',           'BOWL'],
+  ['p006', 'Ranjithkumar G',        'AR'],
+  ['p007', 'Mayank Kriparam',       'BAT'],
+  ['p008', 'Ashutosh',              'BOWL'],
+  ['p009', 'Arpit Luniya',          'AR'],
+  ['p010', 'Mahesh Reddy',          'WK'],
+  ['p011', 'Dhruv Dubey',           'BAT'],
+  ['p012', 'Harsh Mani Tripathi',   'BOWL'],
+  ['p013', 'Abhishek Singh',        'AR'],
+  ['p014', 'Pratyush Tiwari',       'BAT'],
+  ['p015', 'Nishant Yadav',         'BOWL'],
+  ['p016', 'Jasdeep Juneja',        'AR'],
+  ['p017', 'Syed Afrid',            'BAT'],
+  ['p018', 'Debesh Pattanaik',      'BOWL'],
+  ['p019', 'Ananta Roy',            'AR'],
+  ['p020', 'Shivam Gupta',          'WK'],
+  ['p021', 'Madhav',                'BAT'],
+  ['p023', 'Anshu Kumar',           'AR'],
+  ['p024', 'Vivek',                 'BAT'],
+  ['p025', 'Asit',                  'BOWL'],
+  ['p026', 'Amit',                  'AR'],
+  ['p027', 'Shankar Vyas',          'BAT'],
+  ['p028', 'Akshay',                'BOWL'],
+  ['p029', 'Swarabharavi Ulaya',    'AR'],
+  ['p030', 'Suhaib Rayyan',         'WK'],
+  ['p031', 'Anish Kumar',           'BAT'],
+  ['p032', 'Vishal Jain',           'BOWL'],
+  ['p033', 'Subhash Mandal',        'AR'],
+  ['p034', 'Vidya Sagar',           'BAT'],
+  ['p035', 'Johnson Pinto',         'BOWL'],
+  ['p036', 'Parvez Khandakar',      'AR'],
+  ['p037', 'Akash Thakur',          'BAT'],
+  ['p040', 'Nishant Kumar',         'WK'],
+  ['p041', 'Ananta Ray',            'BAT'],
+  ['p044', 'Bikash Jena',           'BAT'],
+  ['p047', 'Abhijit Taware',        'BAT'],
+  ['p048', 'Ankit Agarwal',         'AR'],
+  ['p049', 'Lalit Bihani',          'BOWL'],
+  ['p050', 'Vaibhav Arora',         'WK'],
+
+  ['p051', 'Adit',                  'BAT'],
+  ['p052', 'Manoj G V',             'BOWL'],
+  ['p053', 'Spoorthi Bhat P',       'AR'],
+  ['p054', 'Surya',                 'BAT'],
+  ['p055', 'Rahul Sarungbam Singh', 'BOWL'],
+  ['p056', 'Rashid Khan',           'AR'],
+  ['p057', 'Baharul',               'BAT'],
+  ['p058', 'Srinivas G',            'BOWL'],
+  ['p059', 'Jomy Mathew',           'AR'],
+  ['p060', 'Vivek Nair',            'WK'],
+  ['p061', 'S Vijay Kumar',         'BAT'],
+  ['p062', 'Sarthik Chothani',      'BOWL'],
+  ['p063', 'Keyur',                 'AR'],
+  ['p064', 'Yash Carpenter',        'BAT'],
+  ['p065', 'Ameya',                 'BOWL'],
+  ['p066', 'Rushikesh Kalantri',    'AR'],
+  ['p067', 'Shreyas',               'BAT'],
+  ['p068', 'Abhijeet Jha',          'BOWL'],
+  ['p069', 'Tanmay Kumar',          'AR'],
+  ['p070', 'Shaik Muhammad Irfan',  'WK'],
+  ['p071', 'Jnanesha P S',          'BAT'],
+  ['p072', 'Pankaj',                'BOWL'],
+  ['p073', 'Tushar',                'AR'],
 ];
+
+export const players = ROSTER.map(([id, name, role]) => {
+  const basePriceLakh = basePriceFor(id);
+  return {
+    id,
+    name,
+    role,
+    country: 'India',
+    tags: ['Uncapped', 'Indian'],
+    base: formatBase(basePriceLakh),
+    basePriceLakh,
+    imageUrl: localImage(id),
+    funFact: '',
+  };
+});
 
 export const totalPlayers = players.length;

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bell, ChevronDown, RotateCcw, Settings } from 'lucide-react';
+import { Bell, ChevronDown, RotateCcw, Settings, UserPlus } from 'lucide-react';
 import { useAuction } from '../../context/AuctionContext';
 import { navItems } from '../../data/mockData';
 import TeamsDropdown from './TeamsDropdown';
 import StatsDropdown from './StatsDropdown';
 import TournamentOverlay from '../Tournament/TournamentOverlay';
+import AddPlayerModal from '../AddPlayerModal/AddPlayerModal';
 import './Navbar.css';
 
 const MENUS = {
@@ -18,6 +19,8 @@ export default function Navbar() {
   const [openMenu, setOpenMenu] = useState(null);
   // Full-screen tournament overlay (triggered by the Tournaments nav item).
   const [tournamentOpen, setTournamentOpen] = useState(false);
+  // Modal for adding a player on the spot.
+  const [addPlayerOpen, setAddPlayerOpen] = useState(false);
   const wrapRefs = useRef({});
 
   // Outside click closes whatever's open.
@@ -94,6 +97,14 @@ export default function Navbar() {
 
       <div className="navbar__actions">
         <button
+          className="navbar__icon-btn navbar__icon-btn--accent"
+          aria-label="Add Player"
+          title="Add a player on the spot"
+          onClick={() => setAddPlayerOpen(true)}
+        >
+          <UserPlus size={18} />
+        </button>
+        <button
           className="navbar__icon-btn"
           aria-label="Reset Auction"
           title="Reset Auction"
@@ -122,6 +133,9 @@ export default function Navbar() {
 
       {tournamentOpen && (
         <TournamentOverlay onClose={() => setTournamentOpen(false)} />
+      )}
+      {addPlayerOpen && (
+        <AddPlayerModal onClose={() => setAddPlayerOpen(false)} />
       )}
     </header>
   );
