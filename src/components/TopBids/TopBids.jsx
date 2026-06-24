@@ -3,6 +3,7 @@ import { Crown } from 'lucide-react';
 import { useAuction } from '../../context/AuctionContext';
 import { formatLakh } from '../../utils/auction';
 import { teamColors } from '../../data/mockData';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 import './TopBids.css';
 
 const TOP_N = 5;
@@ -56,10 +57,9 @@ export default function TopBids() {
                 #{idx + 1}
               </span>
 
-              <img
+              <PlayerAvatar
+                player={entry}
                 className="top-bids__avatar"
-                src={entry.imageUrl}
-                alt={entry.name}
               />
 
               <div className="top-bids__meta">

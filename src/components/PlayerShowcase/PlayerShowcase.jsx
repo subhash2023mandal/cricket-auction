@@ -2,6 +2,7 @@ import { Trophy, Users } from 'lucide-react';
 import { useAuction } from '../../context/AuctionContext';
 import { formatLakh } from '../../utils/auction';
 import { teamColors } from '../../data/mockData';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 import './PlayerShowcase.css';
 
 export default function PlayerShowcase() {
@@ -50,7 +51,7 @@ export default function PlayerShowcase() {
       <div className="showcase__body">
         <div className="showcase__player-image">
           <div className="showcase__player-image-ring">
-            <img src={p.imageUrl} alt={p.name} />
+            <PlayerAvatar player={p} />
           </div>
           <span className="showcase__role-badge">{p.role}</span>
         </div>

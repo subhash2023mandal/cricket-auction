@@ -4,6 +4,7 @@ import { useAuction } from '../../context/AuctionContext';
 import { formatLakh } from '../../utils/auction';
 import { players as allPlayers } from '../../data/players';
 import { teamColors } from '../../data/mockData';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 
 const FILTERS = [
   { id: 'all',    label: 'All' },
@@ -140,10 +141,9 @@ export default function StatsDropdown({ onClose }) {
 function PlayerStatRow({ player, status }) {
   return (
     <div className={`player-stat player-stat--${status.status}`}>
-      <img
+      <PlayerAvatar
+        player={player}
         className="player-stat__avatar"
-        src={player.imageUrl}
-        alt={player.name}
       />
       <div className="player-stat__info">
         <div className="player-stat__name" title={player.name}>

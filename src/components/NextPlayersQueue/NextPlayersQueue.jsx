@@ -1,6 +1,7 @@
 import { Shuffle } from 'lucide-react';
 import { useAuction } from '../../context/AuctionContext';
 import { formatLakh } from '../../utils/auction';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 import './NextPlayersQueue.css';
 
 export default function NextPlayersQueue() {
@@ -28,10 +29,9 @@ export default function NextPlayersQueue() {
         ) : (
           upcoming.map((player) => (
             <div key={player.id} className="queue__item">
-              <img
+              <PlayerAvatar
+                player={player}
                 className="queue__avatar"
-                src={player.imageUrl}
-                alt={player.name}
               />
               <div className="queue__meta">
                 <div className="queue__name">{player.name}</div>

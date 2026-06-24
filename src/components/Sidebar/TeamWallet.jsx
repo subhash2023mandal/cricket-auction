@@ -1,4 +1,5 @@
 import { formatLakh } from '../../utils/auction';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 
 export default function TeamWallet({ team }) {
   const fillPercent = team.isOrganizer
@@ -39,10 +40,9 @@ export default function TeamWallet({ team }) {
           <ul className="team-wallet__players">
             {team.squad.map((p) => (
               <li key={p.id} className="team-wallet__player">
-                <img
+                <PlayerAvatar
+                  player={p}
                   className="team-wallet__player-avatar"
-                  src={p.imageUrl}
-                  alt={p.name}
                 />
                 <span className="team-wallet__player-name" title={p.name}>
                   {p.name}

@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { useAuction } from '../../context/AuctionContext';
 import { formatLakh } from '../../utils/auction';
 import { teamColors } from '../../data/mockData';
+import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 
 export default function TeamsDropdown({ onClose }) {
   const { state } = useAuction();
@@ -73,7 +74,7 @@ function TeamRosterCard({ team }) {
         <ul className="team-roster__players">
           {team.squad.map((p) => (
             <li key={p.id} className="team-roster__player">
-              <img src={p.imageUrl} alt={p.name} />
+              <PlayerAvatar player={p} />
               <div className="team-roster__player-info">
                 <span className="team-roster__player-name" title={p.name}>
                   {p.name}
