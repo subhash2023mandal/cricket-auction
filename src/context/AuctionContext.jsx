@@ -48,7 +48,7 @@ const PREASSIGNMENTS = [
   { teamId: 'ss', playerId: 'p018' }, // Surge Strikers   → Debesh Pattanaik
   { teamId: 'pp', playerId: 'p012' }, // Plasma Panthers  → Harsh Mani Tripathi
   { teamId: 'cs', playerId: 'p005' }, // Circuit Spartans → Amit Pandey (Amit Kumar Pandey)
-  { teamId: 'nk', playerId: 'p050' }, // Neon Knights     → Vaibhav Arora
+  { teamId: 'nk', playerId: 'p072' }, // Neon Knights     → Pankaj
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

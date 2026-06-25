@@ -2,7 +2,7 @@
 // Versioned so future schema changes can be handled without breaking saved data.
 
 export const STORAGE_KEY = 'cricket-auction:v1';
-export const STORAGE_VERSION = 18;
+export const STORAGE_VERSION = 24;
 
 export function load() {
   if (typeof window === 'undefined') return null;

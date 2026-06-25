@@ -83,11 +83,10 @@ const ROSTER = [
   ['p047', 'Abhijit Taware',        'BAT'],
   ['p048', 'Ankit Agarwal',         'AR'],
   ['p049', 'Lalit Bihani',          'BOWL'],
-  ['p050', 'Vaibhav Arora',         'WK'],
+  ['p050', 'Vaibhav Arora',         'AR'],
 
   ['p051', 'Adit',                  'BAT'],
   ['p052', 'Manoj G V',             'BOWL'],
-  ['p053', 'Spoorthi Bhat P',       'AR'],
   ['p054', 'Surya',                 'BAT'],
   ['p055', 'Rahul Sarungbam Singh', 'BOWL'],
   ['p056', 'Rashid Khan',           'AR'],
@@ -103,11 +102,17 @@ const ROSTER = [
   ['p066', 'Rushikesh Kalantri',    'AR'],
   ['p067', 'Shreyas',               'BAT'],
   ['p068', 'Abhijeet Jha',          'BOWL'],
-  ['p069', 'Tanmay Kumar',          'AR'],
   ['p070', 'Shaik Muhammad Irfan',  'WK'],
   ['p071', 'Jnanesha P S',          'BAT'],
   ['p072', 'Pankaj',                'BOWL'],
   ['p073', 'Tushar',                'AR'],
+  ['p074', 'Mohit Pareek',          'BAT'],
+  ['p075', 'Gaurav Kumar',          'BOWL'],
+  ['p076', 'Tanmay Kumar',          'AR'],
+  ['p077', 'Shrishti Kashyap',      'BAT'],
+  ['p078', 'Karthikeyan M',         'BOWL'],
+  ['p079', 'Karuna Sankolli',       'WK'],
+  ['p080', 'Manav Mittal',          'BAT'],
 ];
 
 // One-liner descriptions shown in the player showcase. Premium picks
@@ -159,7 +164,6 @@ const FUN_FACTS = {
   p050: 'Keeper-batter who commentates on every ball — including his own dismissals.',
   p051: 'Single-name showman. Thinks he’s Pelé. Plays like a part-timer.',
   p052: 'G stands for Grumpy. Especially after a run-out.',
-  p053: 'Promised four overs. Delivered three-and-a-half. The 0.4 is still loading.',
   p054: 'Burns bright. Fades fast. Like a sun in playoff weather.',
   p055: 'Owns the league’s longest name and shortest backlift.',
   p056: 'Not the Rashid Khan. Tries his best. Apologises after every over.',
@@ -175,11 +179,17 @@ const FUN_FACTS = {
   p066: 'Sage on the field. College kid off it.',
   p067: 'The auspicious one (Shreyas). His bat agrees on alternate weekends.',
   p068: 'Victorious by name (Abhijeet). Fearlessly bad at fielding.',
-  p069: 'Off-spin only. Off-stump only. Off-day mostly.',
   p070: 'Tall, lanky, terrifying. Especially the bouncer.',
   p071: 'Lord of wisdom (Jnanesha). Won’t shut up about analytics.',
   p072: 'Lotus (Pankaj) by name. Rises slowly out of every batting collapse.',
   p073: 'Frost by name (Tushar). Meltdown by the 12th over.',
+  p074: 'Pareeks the pitch like a parking spot — then drives straight through it.',
+  p075: 'Bowls heavy (Gaurav) deliveries. Even the umpire flinches.',
+  p076: 'Came (Tanmay) for the cricket, stayed for the catered lunch.',
+  p077: 'Bats with grace. Sledges with poetry. Wins the over-rate, too.',
+  p078: 'The M stands for Miser. Ten dot balls or it’s personal.',
+  p079: 'Kindness (Karuna) personified — until the keeper’s gloves come on.',
+  p080: 'Human (Manav) batting machine. Glitches only on inswingers.',
 };
 
 export const players = ROSTER.map(([id, name, role]) => {
