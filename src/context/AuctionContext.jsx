@@ -35,7 +35,7 @@ const TEAMS = [
 ];
 const ORGANIZER_ID = 'organizer';
 const INITIAL_PURSE_LAKH = 10000; // 100 Cr per franchise
-const SQUAD_LIMIT = 11;
+const SQUAD_LIMIT = 12;
 const MAX_BID_HISTORY = 4;
 
 // One player per franchise is pre-allocated before the live auction starts.

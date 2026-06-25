@@ -19,12 +19,16 @@ export function parseLakhFromBaseString(str) {
   return m[2] === 'cr' ? Math.round(n * 100) : Math.round(n);
 }
 
-// Bid increments (in Lakh):
-//   • Under ₹2 Cr  → +30 L per bid
-//   • At/above ₹2 Cr → +50 L per bid
+// Bid increments (in Lakh) — start small, then grow as the price climbs:
+//   • Under ₹3 Cr   → +50 L per bid  (early-stage bidding)
+//   • ₹3 Cr–₹5 Cr   → +75 L per bid  (gradual step-up)
+//   • ₹5 Cr–₹10 Cr  → +1 Cr (100 L)
+//   • ₹10 Cr+        → +1.5 Cr (150 L)
 export function nextBidIncrement(currentLakh) {
-  if (currentLakh < 200) return 30;
-  return 50;
+  if (currentLakh < 300) return 50;
+  if (currentLakh < 500) return 75;
+  if (currentLakh < 1000) return 100;
+  return 150;
 }
 
 // The amount a team would bid right now: base price if no one has bid yet,

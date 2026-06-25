@@ -40,8 +40,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 10px 12px;
+  gap: 6px;
+  padding: 12px 14px;
   border-radius: var(--radius-md);
   background: var(--bg-elevated);
   border: 1px solid var(--border-strong);
@@ -74,29 +74,49 @@
   cursor: not-allowed;
 }
 
-.bidding__team-badge {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: var(--team-color);
-  color: #fff;
+.bidding__team-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.bidding__team.is-winning .bidding__team-badge {
-  background: var(--accent-green);
-  color: var(--on-accent);
+.bidding__team-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--team-color);
+  box-shadow: 0 0 8px var(--team-color);
+}
+
+.bidding__team-short {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+}
+
+.bidding__team-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 .bidding__team-purse {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  margin-top: auto;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--accent-green);
 }
 
-.bidding__team.is-winning .bidding__team-purse {
+.bidding__team.is-winning .bidding__team-short {
   color: var(--accent-green);
+}
+
+.bidding__team.is-winning .bidding__team-name {
+  color: var(--accent-green);
+  opacity: 0.85;
 }
 
 /* ── Sold / Unsold actions ──────────────────────────────────────────────── */

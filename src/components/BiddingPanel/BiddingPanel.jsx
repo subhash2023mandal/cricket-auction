@@ -57,7 +57,11 @@ export default function BiddingPanel() {
                       : `Bid ₹${formatLakh(proposedBidLakh)} for ${team.name}`
               }
             >
-              <span className="bidding__team-badge">{team.short}</span>
+              <div className="bidding__team-top">
+                <span className="bidding__team-dot" />
+                <span className="bidding__team-short">{team.short}</span>
+              </div>
+              <span className="bidding__team-name">{team.name}</span>
               <span className="bidding__team-purse">
                 ₹{formatLakh(team.purseLakh)}
               </span>

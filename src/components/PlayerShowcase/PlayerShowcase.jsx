@@ -5,6 +5,8 @@ import { teamColors } from '../../data/mockData';
 import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 import './PlayerShowcase.css';
 
+const ROLE_ICONS = { BAT: '🏏', BOWL: '🎯', AR: '⚡', WK: '🧤' };
+
 export default function PlayerShowcase() {
   const { state } = useAuction();
   const { current, teams, pool, soldHistory, round = 1 } = state;
@@ -50,47 +52,35 @@ export default function PlayerShowcase() {
 
       <div className="showcase__body">
         <div className="showcase__player-image">
-          <div className="showcase__player-image-ring">
+          <div
+            className={`showcase__player-image-ring ${
+              current.highestBidderId ? 'showcase__player-image-ring--bidding' : ''
+            }`}
+          >
             <PlayerAvatar player={p} />
           </div>
           <span className="showcase__role-badge">{p.role}</span>
         </div>
 
         <div className="showcase__info">
-          <div className="showcase__tags">
-            {p.tags.map((tag, i) => (
-              <span key={tag} className="showcase__tag">
-                {tag.toUpperCase()}
-                {i < p.tags.length - 1 && (
-                  <span className="showcase__tag-sep">|</span>
-                )}
-              </span>
-            ))}
-          </div>
+          <h1 className="showcase__name">{p.name.toUpperCase()}</h1>
 
-          <h1 className="showcase__name">
-            {p.name.split(' ').map((n, i) => (
-              <span key={i}>
-                {n.toUpperCase()}
-                <br />
-              </span>
-            ))}
-          </h1>
+          <hr className="showcase__divider" />
 
-          <dl className="showcase__stats">
-            <div>
-              <dt className="label">Role</dt>
-              <dd>{p.role}</dd>
-            </div>
-            <div>
-              <dt className="label">Country</dt>
-              <dd>{p.country}</dd>
-            </div>
-            <div>
-              <dt className="label">Base</dt>
-              <dd>₹{formatLakh(p.basePriceLakh)}</dd>
-            </div>
-          </dl>
+          <ul className="showcase__meta">
+            <li className="showcase__meta-row">
+              <span className="showcase__meta-pair">
+                <span className="showcase__meta-icon">
+                  {ROLE_ICONS[p.role] ?? '🏏'}
+                </span>
+                <span>{p.role}</span>
+              </span>
+              <span className="showcase__meta-pair">
+                <span className="showcase__meta-icon">💰</span>
+                <span>₹{formatLakh(p.basePriceLakh)}</span>
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -118,7 +108,10 @@ export default function PlayerShowcase() {
           <div className="label" style={{ color: 'var(--accent-green)' }}>
             Current Price
           </div>
-          <div className="showcase__current-price-value">
+          <div
+            key={current.currentPriceLakh}
+            className="showcase__current-price-value"
+          >
             ₹{formatLakh(current.currentPriceLakh)}
           </div>
         </div>
