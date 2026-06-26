@@ -6,6 +6,8 @@ import TeamsDropdown from './TeamsDropdown';
 import StatsDropdown from './StatsDropdown';
 import TournamentOverlay from '../Tournament/TournamentOverlay';
 import AddPlayerModal from '../AddPlayerModal/AddPlayerModal';
+import StartAuctionButton from '../AuctionStarter/StartAuctionButton';
+import FeatureSpeaker from '../FeatureSpeaker/FeatureSpeaker';
 import './Navbar.css';
 
 const MENUS = {
@@ -96,6 +98,8 @@ export default function Navbar() {
       </nav>
 
       <div className="navbar__actions">
+        <StartAuctionButton />
+        <FeatureSpeaker />
         <button
           className="navbar__icon-btn navbar__icon-btn--accent"
           aria-label="Add Player"

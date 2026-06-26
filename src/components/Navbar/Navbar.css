@@ -52,8 +52,10 @@
 .navbar__actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   justify-self: end;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .navbar__icon-btn {

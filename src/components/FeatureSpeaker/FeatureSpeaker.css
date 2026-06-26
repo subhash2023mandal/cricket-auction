@@ -1,0 +1,84 @@
+/* ── "Tour" button (Web Speech API narration) ───────────────────────────── */
+.feature-speaker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-bright);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  /* Renders in ALL-CAPS like the other navbar action pills. */
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.feature-speaker-btn:hover {
+  background: var(--bg-elevated);
+  border-color: rgba(0, 210, 106, 0.45);
+  color: var(--accent-green);
+}
+
+.feature-speaker-btn.is-speaking {
+  background: var(--accent-green-soft);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(0, 210, 106, 0.18);
+}
+
+.feature-speaker-btn.is-loading {
+  border-color: rgba(0, 210, 106, 0.55);
+  color: var(--accent-green);
+  cursor: progress;
+}
+
+.feature-speaker-btn__spinner {
+  animation: feature-speaker-spin 0.9s linear infinite;
+}
+
+@keyframes feature-speaker-spin {
+  to { transform: rotate(360deg); }
+}
+
+.feature-speaker-btn__label {
+  white-space: nowrap;
+}
+
+.feature-speaker-btn__bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  margin-left: 2px;
+}
+
+.feature-speaker-btn__bars span {
+  display: inline-block;
+  width: 3px;
+  background: currentColor;
+  border-radius: 2px;
+  animation: feature-speaker-bars 0.9s ease-in-out infinite;
+}
+
+.feature-speaker-btn__bars span:nth-child(1) { animation-delay: 0s;   height: 40%; }
+.feature-speaker-btn__bars span:nth-child(2) { animation-delay: 0.18s; height: 80%; }
+.feature-speaker-btn__bars span:nth-child(3) { animation-delay: 0.36s; height: 55%; }
+.feature-speaker-btn__bars span:nth-child(4) { animation-delay: 0.54s; height: 90%; }
+
+@keyframes feature-speaker-bars {
+  0%, 100% { transform: scaleY(0.4); }
+  50%      { transform: scaleY(1); }
+}
+
+@media (max-width: 720px) {
+  .feature-speaker-btn {
+    padding: 0 10px;
+  }
+  .feature-speaker-btn__label {
+    display: none;
+  }
+}

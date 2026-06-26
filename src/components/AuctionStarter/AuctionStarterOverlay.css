@@ -1,0 +1,208 @@
+/* ── Full-screen "Auction is now LIVE" reveal ───────────────────────────── */
+.auction-starter {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  animation: auction-starter-fade-in 0.25s ease-out;
+}
+
+@keyframes auction-starter-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.auction-starter__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 50% 45%,
+      rgba(0, 210, 106, 0.22),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 50% 100%,
+      rgba(255, 200, 60, 0.10),
+      transparent 70%
+    ),
+    rgba(2, 8, 16, 0.92);
+  backdrop-filter: blur(12px);
+}
+
+.auction-starter__stage {
+  position: relative;
+  z-index: 1;
+  width: min(720px, calc(100vw - 32px));
+  aspect-ratio: 1;
+  max-height: calc(100vh - 64px);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.auction-starter__lottie {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.auction-starter__lottie > * {
+  width: 100% !important;
+  height: 100% !important;
+  filter: drop-shadow(0 0 60px rgba(0, 210, 106, 0.35))
+          drop-shadow(0 0 30px rgba(255, 200, 60, 0.25));
+}
+
+.auction-starter__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 560px;
+  pointer-events: none;
+}
+
+.auction-starter__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 210, 106, 0.5);
+  color: var(--accent-green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  animation: auction-starter-pop 0.5s ease-out 0.1s both;
+}
+
+.auction-starter__headline {
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.65);
+}
+
+.auction-starter__headline-line {
+  display: block;
+}
+
+.auction-starter__headline-line--1 {
+  font-size: clamp(18px, 3vw, 26px);
+  letter-spacing: 0.22em;
+  color: var(--accent-green);
+  animation: auction-starter-pop 0.55s ease-out 0.2s both;
+}
+
+.auction-starter__headline-line--2 {
+  font-size: clamp(34px, 6.4vw, 60px);
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 0%, #c8f7dc 60%, #00d26a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: auction-starter-rise 0.55s ease-out 0.35s both;
+}
+
+.auction-starter__live {
+  font-style: normal;
+  position: relative;
+  display: inline-block;
+  padding: 0 0.12em;
+  margin-left: 0.1em;
+  color: #fff;
+  background: linear-gradient(135deg, #ff5757 0%, #ff9a3c 50%, #ffd84d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: auction-starter-live-pulse 1.4s ease-in-out 0.6s infinite;
+}
+
+.auction-starter__live::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #ffd84d, transparent);
+  filter: blur(1px);
+}
+
+.auction-starter__tagline {
+  margin: 4px 0 0;
+  font-size: clamp(13px, 1.4vw, 16px);
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  animation: auction-starter-rise 0.55s ease-out 0.55s both;
+}
+
+.auction-starter__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  animation: auction-starter-rise 0.55s ease-out 0.75s both;
+}
+
+.auction-starter__chip {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 210, 106, 0.45);
+  color: var(--text-primary);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes auction-starter-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes auction-starter-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes auction-starter-live-pulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 152, 0, 0.55)); }
+  50%      { filter: drop-shadow(0 0 24px rgba(255, 215, 64, 0.85)); }
+}
+
+@media (max-width: 600px) {
+  .auction-starter__stage {
+    width: calc(100vw - 24px);
+  }
+  .auction-starter__chip {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+}
