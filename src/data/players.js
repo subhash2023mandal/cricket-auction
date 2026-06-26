@@ -17,7 +17,7 @@
 const localImage = (id) => `${import.meta.env.BASE_URL}players/${id}.jpg`;
 
 const PREMIUM_BASE_LAKH = 200; // 2 Cr
-const PREMIUM_IDS = new Set(['p033', 'p048', 'p049']);
+const PREMIUM_IDS = new Set(['p033', 'p048', 'p049','p050','p076']);
 const BASE_BUCKETS_LAKH = [50, 75, 100, 125, 150, 175, 200];
 
 // Tiny string hash → keeps each id's bucket fixed instead of changing on
