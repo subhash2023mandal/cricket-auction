@@ -111,6 +111,9 @@ const ROSTER = [
   ['p078', 'Karthikeyan M',         'BOWL'],
   ['p079', 'Karuna Sankolli',       'WK'],
   ['p080', 'Manav Mittal',          'BAT'],
+  ['p081', 'Yogesh D',              'BAT'],
+  ['p082', 'Tapish Sharma',         'AR'],
+  ['p083', 'Piyush',                'BOWL'],
 ];
 
 // One-liner descriptions shown in the player showcase. Premium picks
@@ -187,6 +190,9 @@ const FUN_FACTS = {
   p078: 'The M stands for Miser. Ten dot balls or it’s personal.',
   p079: 'Kindness (Karuna) personified — until the keeper’s gloves come on.',
   p080: 'Human (Manav) batting machine. Glitches only on inswingers.',
+  p081: 'Cool as the coastal breeze. Cover drives that hit harder than the waves.',
+  p082: 'Rides a Himalayan, bowls like an avalanche. Helmet on, fear off.',
+  p083: 'Single-name silent assassin. Lets the bouncers do the talking.',
 };
 
 export const players = ROSTER.map(([id, name, role]) => {
