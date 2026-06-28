@@ -17,17 +17,28 @@ export default function TeamWallet({ team, isSelected = false, onSelect }) {
     .filter(Boolean)
     .join(' ');
 
+  // Keyboard parity with a native button: Enter / Space activate the card.
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect?.();
+    }
+  };
+
   return (
-    <div className={classes}>
-      <button
-        type="button"
-        className="team-wallet__row team-wallet__row--button"
-        onClick={onSelect}
-        aria-pressed={isSelected}
-      >
+    <div
+      className={classes}
+      role="button"
+      tabIndex={0}
+      aria-pressed={isSelected}
+      aria-label={`View ${team.name} squad`}
+      onClick={onSelect}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="team-wallet__row">
         <span className="team-wallet__name">{team.name}</span>
         <span className="team-wallet__purse">{purseLabel}</span>
-      </button>
+      </div>
 
       <div className="team-wallet__bar">
         <div

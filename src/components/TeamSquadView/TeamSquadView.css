@@ -163,6 +163,11 @@
 }
 
 .team-squad__item {
+  list-style: none;
+}
+
+.team-squad__item-btn {
+  width: 100%;
   display: grid;
   grid-template-columns: 32px 44px 1fr auto;
   align-items: center;
@@ -171,13 +176,22 @@
   border-radius: var(--radius-md);
   background: var(--bg-panel-2);
   border: 1px solid var(--border-subtle);
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
-.team-squad__item:hover {
+.team-squad__item-btn:hover {
   background: var(--bg-elevated);
   border-color: var(--border-strong);
   transform: translateX(2px);
+}
+
+.team-squad__item-btn:focus-visible {
+  outline: 2px solid var(--team-accent, var(--accent-green));
+  outline-offset: 2px;
 }
 
 .team-squad__rank {
@@ -284,7 +298,7 @@
     font-size: 12px;
   }
 
-  .team-squad__item {
+  .team-squad__item-btn {
     grid-template-columns: 26px 36px 1fr auto;
     gap: 10px;
     padding: 8px 10px;

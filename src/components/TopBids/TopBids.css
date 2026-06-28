@@ -45,7 +45,7 @@
   flex-direction: column;
   gap: 10px;
   /* Show ~6 rows comfortably, scroll the rest inside the card. */
-  max-height: 360px;
+  max-height: 800px;
   overflow-y: auto;
   scrollbar-width: thin;
 }

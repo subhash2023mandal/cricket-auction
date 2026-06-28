@@ -58,6 +58,12 @@ const TEAM_SQUADS = {
   nk: ['p072', 'p041', 'p067', 'p049', 'p010', 'p071', 'p033', 'p015', 'p007', 'p073', 'p040', 'p003'],
 };
 
+// First id in each TEAM_SQUADS list is the captain. Exposed for views (like
+// the player details modal) that want to surface a Captain badge.
+export const TEAM_CAPTAIN_IDS = Object.fromEntries(
+  Object.entries(TEAM_SQUADS).map(([teamId, ids]) => [teamId, ids[0]]),
+);
+
 // Actual winning bids from the live auction (Lakh). Anyone not listed here
 // falls back to their base price during seeding.
 const PLAYER_SALE_OVERRIDES_LAKH = {

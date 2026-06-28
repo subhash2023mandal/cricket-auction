@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { X, Users } from 'lucide-react';
-import { useAuction } from '../../context/AuctionContext';
+import { useAuction, TEAM_CAPTAIN_IDS } from '../../context/AuctionContext';
 import { formatLakh } from '../../utils/auction';
 import { teamColors } from '../../data/mockData';
 import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
+import PlayerDetailModal from '../PlayerDetailModal/PlayerDetailModal';
 import './TeamSquadView.css';
 
 const ROLE_ICONS = { BAT: '🏏', BOWL: '🎯', AR: '⚡', WK: '🧤' };
@@ -11,6 +12,13 @@ const ROLE_ICONS = { BAT: '🏏', BOWL: '🎯', AR: '⚡', WK: '🧤' };
 export default function TeamSquadView({ teamId, onClose }) {
   const { state } = useAuction();
   const team = state.teams.find((t) => t.id === teamId);
+  const [activePlayerId, setActivePlayerId] = useState(null);
+
+  const activePlayer = useMemo(
+    () => team?.squad.find((p) => p.id === activePlayerId) ?? null,
+    [team, activePlayerId],
+  );
+  const captainId = team ? TEAM_CAPTAIN_IDS[team.id] : null;
 
   // Sort squad by sold price (highest first) so the captain / top buys sit at
   // the top, mirroring the Top Bids ranking layout.
@@ -94,37 +102,53 @@ export default function TeamSquadView({ teamId, onClose }) {
         <ol className="team-squad__list">
           {sortedSquad.map((p, idx) => (
             <li key={p.id} className="team-squad__item">
-              <span className="team-squad__rank">{idx + 1}</span>
-
-              <PlayerAvatar player={p} className="team-squad__avatar" />
-
-              <div className="team-squad__meta">
-                <div className="team-squad__player-name" title={p.name}>
-                  {p.name}
-                </div>
-                <div className="team-squad__player-sub">
-                  <span className="team-squad__role">
-                    <span className="team-squad__role-icon">
-                      {ROLE_ICONS[p.role] ?? '🏏'}
-                    </span>
-                    {p.role}
-                  </span>
-                  <span className="team-squad__base">
-                    Base ₹{formatLakh(p.basePriceLakh)}
-                  </span>
-                </div>
-              </div>
-
-              <div
-                className={`team-squad__amount ${
-                  team.isOrganizer ? 'team-squad__amount--unsold' : ''
-                }`}
+              <button
+                type="button"
+                className="team-squad__item-btn"
+                onClick={() => setActivePlayerId(p.id)}
+                aria-label={`View ${p.name} details`}
               >
-                {team.isOrganizer ? 'UNSOLD' : `₹${formatLakh(p.soldPriceLakh)}`}
-              </div>
+                <span className="team-squad__rank">{idx + 1}</span>
+
+                <PlayerAvatar player={p} className="team-squad__avatar" />
+
+                <div className="team-squad__meta">
+                  <div className="team-squad__player-name" title={p.name}>
+                    {p.name}
+                  </div>
+                  <div className="team-squad__player-sub">
+                    <span className="team-squad__role">
+                      <span className="team-squad__role-icon">
+                        {ROLE_ICONS[p.role] ?? '🏏'}
+                      </span>
+                      {p.role}
+                    </span>
+                    <span className="team-squad__base">
+                      Base ₹{formatLakh(p.basePriceLakh)}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  className={`team-squad__amount ${
+                    team.isOrganizer ? 'team-squad__amount--unsold' : ''
+                  }`}
+                >
+                  {team.isOrganizer ? 'UNSOLD' : `₹${formatLakh(p.soldPriceLakh)}`}
+                </div>
+              </button>
             </li>
           ))}
         </ol>
+      )}
+
+      {activePlayer && (
+        <PlayerDetailModal
+          player={activePlayer}
+          team={team}
+          isCaptain={!team.isOrganizer && captainId === activePlayer.id}
+          onClose={() => setActivePlayerId(null)}
+        />
       )}
     </section>
   );

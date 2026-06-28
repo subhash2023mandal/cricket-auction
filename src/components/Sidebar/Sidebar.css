@@ -87,7 +87,25 @@
   flex-direction: column;
   gap: 10px;
   position: relative;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease, transform 0.15s ease;
+}
+
+.team-wallet:hover {
+  background: var(--bg-panel-2);
+  border-color: var(--border-strong);
+  transform: translateX(2px);
+}
+
+.team-wallet:hover .team-wallet__name {
+  color: #ffffff;
+}
+
+.team-wallet:focus-visible {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 2px;
 }
 
 .team-wallet__row {
@@ -95,29 +113,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-}
-
-.team-wallet__row--button {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: color 0.15s ease;
-}
-
-.team-wallet__row--button:hover .team-wallet__name {
-  color: #ffffff;
-}
-
-.team-wallet__row--button:focus-visible {
-  outline: 2px solid var(--accent-green);
-  outline-offset: 2px;
 }
 
 .team-wallet__name {
