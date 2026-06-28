@@ -1,7 +1,7 @@
 import { formatLakh } from '../../utils/auction';
 import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 
-export default function TeamWallet({ team }) {
+export default function TeamWallet({ team, isSelected = false, onSelect }) {
   const fillPercent = team.isOrganizer
     ? Math.round((team.squad.length / Math.max(team.maxSquad, 1)) * 100)
     : Math.round((team.purseLakh / Math.max(team.initialPurseLakh, 1)) * 100);
@@ -9,14 +9,25 @@ export default function TeamWallet({ team }) {
   const purseLabel = team.isOrganizer ? '—' : `₹${formatLakh(team.purseLakh)}`;
   const hasPlayers = team.squad.length > 0;
 
+  const classes = [
+    'team-wallet',
+    team.isOrganizer ? 'team-wallet--organizer' : '',
+    isSelected ? 'team-wallet--selected' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <div
-      className={`team-wallet ${team.isOrganizer ? 'team-wallet--organizer' : ''}`}
-    >
-      <div className="team-wallet__row">
+    <div className={classes}>
+      <button
+        type="button"
+        className="team-wallet__row team-wallet__row--button"
+        onClick={onSelect}
+        aria-pressed={isSelected}
+      >
         <span className="team-wallet__name">{team.name}</span>
         <span className="team-wallet__purse">{purseLabel}</span>
-      </div>
+      </button>
 
       <div className="team-wallet__bar">
         <div

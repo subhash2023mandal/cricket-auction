@@ -39,11 +39,24 @@
 
 .top-bids__list {
   list-style: none;
-  padding: 0;
+  padding: 0 4px 0 0;
   margin: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /* Show ~6 rows comfortably, scroll the rest inside the card. */
+  max-height: 360px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.top-bids__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.top-bids__list::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
 }
 
 .top-bids__item {

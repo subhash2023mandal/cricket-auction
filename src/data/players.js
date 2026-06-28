@@ -1,7 +1,7 @@
-// Auction pool — local roster (66 entries, deduped from the source list).
-// IDs are intentionally stable (gaps like p022/p038/p039/p042/p043/p045/p046
+// Auction pool — local roster (72 entries; matches the final draft sheet).
+// IDs are intentionally stable (gaps like p019/p022/p038/p039/p042/p043/p045/p046
 // remain so that any photos already at `public/players/{id}.jpg` stay aligned to
-// the canonical id). New names continue from p051.
+// the canonical id). New names continue from p084.
 //
 // `imageUrl` points to `public/players/{id}.jpg`. Drop a matching file in
 // that folder and it appears automatically. If the file is missing, the
@@ -53,7 +53,7 @@ const ROSTER = [
   ['p010', 'Mahesh Reddy',          'WK'],
   ['p011', 'Dhruv Dubey',           'BAT'],
   ['p012', 'Harsh Mani Tripathi',   'BOWL'],
-  ['p013', 'Abhishek Singh',        'AR'],
+  ['p013', 'Abhishek Kumar',        'AR'],
   ['p014', 'Pratyush Tiwari',       'BAT'],
   ['p015', 'Nishant Yadav',         'BOWL'],
   ['p016', 'Jasdeep Juneja',        'AR'],
@@ -62,9 +62,9 @@ const ROSTER = [
   ['p020', 'Shivam Gupta',          'WK'],
   ['p021', 'Madhav',                'BAT'],
   ['p023', 'Anshu Kumar',           'AR'],
-  ['p024', 'Vivek',                 'BAT'],
+  ['p024', 'Vivek Singh',           'BAT'],
   ['p025', 'Asit',                  'BOWL'],
-  ['p026', 'Amit',                  'AR'],
+  ['p026', 'Amit Srivastava',       'AR'],
   ['p027', 'Shankar Vyas',          'BAT'],
   ['p028', 'Akshay',                'BOWL'],
   ['p029', 'Swarabharavi Ulaya',    'AR'],
@@ -87,7 +87,6 @@ const ROSTER = [
   ['p052', 'Manoj G V',             'BOWL'],
   ['p054', 'Surya',                 'BAT'],
   ['p055', 'Rahul Sarungbam Singh', 'BOWL'],
-  ['p056', 'Rashid Khan',           'AR'],
   ['p057', 'Baharul',               'BAT'],
   ['p058', 'Srinivas G',            'BOWL'],
   ['p059', 'Jomy Mathew',           'AR'],
@@ -107,13 +106,13 @@ const ROSTER = [
   ['p077', 'Mohit Pareek',          'BAT'],
   ['p075', 'Gaurav Kumar',          'BOWL'],
   ['p076', 'Tanmay Kumar',          'AR'],
-  ['p074', 'Shrishti Kashyap',      'BAT'],
   ['p078', 'Karthikeyan M',         'BOWL'],
-  ['p079', 'Karuna Sankolli',       'WK'],
   ['p080', 'Manav Mittal',          'BAT'],
   ['p081', 'Yogesh D',              'BAT'],
   ['p082', 'Tapish Sharma',         'AR'],
   ['p083', 'Piyush',                'BOWL'],
+  ['p084', 'Poojan',                'BAT'],
+  ['p085', 'Kapil',                 'BAT'],
 ];
 
 // One-liner descriptions shown in the player showcase. Premium picks
@@ -166,7 +165,6 @@ const FUN_FACTS = {
   p052: 'G stands for Grumpy. Especially after a run-out.',
   p054: 'Burns bright. Fades fast. Like a sun in playoff weather.',
   p055: 'Owns the league’s longest name and shortest backlift.',
-  p056: 'Not the Rashid Khan. Tries his best. Apologises after every over.',
   p057: 'Comes from the spring (Bahar). Blooms only in the death overs.',
   p058: 'Engineer by training. No-balls by tradition.',
   p059: 'Catches everything. Except his own jaw after a misfield.',
@@ -183,16 +181,16 @@ const FUN_FACTS = {
   p071: 'Lord of wisdom (Jnanesha). Won’t shut up about analytics.',
   p072: 'Lotus (Pankaj) by name. Rises slowly out of every batting collapse.',
   p073: 'Frost by name (Tushar). Meltdown by the 12th over.',
-  p074: 'Pareeks the pitch like a parking spot — then drives straight through it.',
   p075: 'Bowls heavy (Gaurav) deliveries. Even the umpire flinches.',
   p076: 'Came (Tanmay) for the cricket, stayed for the catered lunch.',
   p077: 'Bats with grace. Sledges with poetry. Wins the over-rate, too.',
   p078: 'The M stands for Miser. Ten dot balls or it’s personal.',
-  p079: 'Kindness (Karuna) personified — until the keeper’s gloves come on.',
   p080: 'Human (Manav) batting machine. Glitches only on inswingers.',
   p081: 'Cool as the coastal breeze. Cover drives that hit harder than the waves.',
   p082: 'Rides a Himalayan, bowls like an avalanche. Helmet on, fear off.',
   p083: 'Single-name silent assassin. Lets the bouncers do the talking.',
+  p084: 'Last-pick wildcard. Quietly steals the man-of-the-match award.',
+  p085: 'Named after a legend, plays like a part-timer in disguise.',
 };
 
 export const players = ROSTER.map(([id, name, role]) => {

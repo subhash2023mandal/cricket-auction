@@ -1,0 +1,297 @@
+.team-squad {
+  --team-accent: var(--accent-green);
+  display: flex;
+  flex-direction: column;
+  padding: 22px 26px;
+  gap: 16px;
+  min-height: 100%;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(255, 255, 255, 0.04),
+      transparent 50%
+    ),
+    var(--bg-panel);
+}
+
+.team-squad::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--team-accent) 30%,
+    var(--team-accent) 70%,
+    transparent
+  );
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.team-squad__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.team-squad__title-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.team-squad__badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.06em;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.team-squad__name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.team-squad__sub {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.team-squad__sub-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+}
+
+.team-squad__sub-dot {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.team-squad__close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.team-squad__close:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.team-squad__close-btn {
+  align-self: center;
+  margin-top: 12px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.team-squad--empty {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--text-secondary);
+  gap: 8px;
+}
+
+.team-squad__empty {
+  padding: 32px 8px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.team-squad__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 6px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.team-squad__list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.team-squad__list::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+}
+
+.team-squad__item {
+  display: grid;
+  grid-template-columns: 32px 44px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border-subtle);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.team-squad__item:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+  transform: translateX(2px);
+}
+
+.team-squad__rank {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.team-squad__item:nth-child(1) .team-squad__rank {
+  color: #f5c542;
+}
+.team-squad__item:nth-child(2) .team-squad__rank {
+  color: #cdd6e3;
+}
+.team-squad__item:nth-child(3) .team-squad__rank {
+  color: #d18b56;
+}
+
+.team-squad__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+}
+
+.team-squad__meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.team-squad__player-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.team-squad__player-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.team-squad__role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.team-squad__role-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.team-squad__base {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.team-squad__amount {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--accent-green);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.team-squad__amount--unsold {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 900px) {
+  .team-squad {
+    padding: 16px 18px;
+  }
+
+  .team-squad__name {
+    font-size: 18px;
+  }
+
+  .team-squad__badge {
+    width: 40px;
+    height: 40px;
+    font-size: 12px;
+  }
+
+  .team-squad__item {
+    grid-template-columns: 26px 36px 1fr auto;
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  .team-squad__avatar {
+    width: 36px;
+    height: 36px;
+  }
+}

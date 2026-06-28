@@ -4,7 +4,7 @@ import { useAuction } from '../../context/AuctionContext';
 import { tournament } from '../../data/mockData';
 import './Sidebar.css';
 
-export default function Sidebar() {
+export default function Sidebar({ selectedTeamId, onSelectTeam }) {
   const { state } = useAuction();
 
   return (
@@ -28,7 +28,12 @@ export default function Sidebar() {
 
       <div className="sidebar__wallets">
         {state.teams.map((team) => (
-          <TeamWallet key={team.id} team={team} />
+          <TeamWallet
+            key={team.id}
+            team={team}
+            isSelected={selectedTeamId === team.id}
+            onSelect={() => onSelectTeam?.(team.id)}
+          />
         ))}
       </div>
     </aside>

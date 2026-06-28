@@ -38,18 +38,49 @@ const INITIAL_PURSE_LAKH = 10000; // 100 Cr per franchise
 const SQUAD_LIMIT = 12;
 const MAX_BID_HISTORY = 4;
 
-// One player per franchise is pre-allocated before the live auction starts.
-// Each is recorded as a ₹5 Cr (500 L) sale: added to the team's squad,
-// deducted from the purse, and listed in soldHistory.
-const PREASSIGNED_SALE_LAKH = 500;
-const PREASSIGNMENTS = [
-  { teamId: 'vv', playerId: 'p036' }, // Voltage Vipers   → Parvez Khandakar
-  { teamId: 'tt', playerId: 'p021' }, // Thunder Titans   → Madhav (Madhavendra)
-  { teamId: 'ss', playerId: 'p018' }, // Surge Strikers   → Debesh Pattanaik
-  { teamId: 'pp', playerId: 'p012' }, // Plasma Panthers  → Harsh Mani Tripathi
-  { teamId: 'cs', playerId: 'p029' }, // Circuit Spartans → Swarabharavi Ulaya
-  { teamId: 'nk', playerId: 'p072' }, // Neon Knights     → Pankaj
-];
+// Full draft sheet: every franchise's locked-in 12-player squad. The first id
+// in each list is the captain (recorded as a ₹5 Cr / 500 L sale). The other
+// 11 default to their own base price; any winning-bid overrides live in
+// PLAYER_SALE_OVERRIDES_LAKH below.
+const PREASSIGNED_SALE_LAKH = 500; // captain sale price (₹5 Cr)
+const TEAM_SQUADS = {
+  // Voltage Vipers — captain Parvez Khandakar
+  vv: ['p036', 'p063', 'p064', 'p066', 'p009', 'p082', 'p016', 'p075', 'p032', 'p026', 'p084', 'p085'],
+  // Thunder Titans — captain Madhav
+  tt: ['p021', 'p001', 'p050', 'p081', 'p051', 'p065', 'p005', 'p035', 'p013', 'p011', 'p034', 'p080'],
+  // Surge Strikers — captain Debesh Pattanaik
+  ss: ['p018', 'p070', 'p008', 'p060', 'p076', 'p030', 'p047', 'p004', 'p025', 'p061', 'p027', 'p024'],
+  // Plasma Panthers — captain Harsh Mani Tripathi
+  pp: ['p012', 'p083', 'p023', 'p055', 'p037', 'p062', 'p020', 'p052', 'p068', 'p017', 'p078', 'p014'],
+  // Circuit Spartans — captain Swarabharavi Ulaya
+  cs: ['p029', 'p006', 'p059', 'p048', 'p044', 'p057', 'p002', 'p028', 'p077', 'p058', 'p054', 'p031'],
+  // Neon Knights — captain Pankaj
+  nk: ['p072', 'p041', 'p067', 'p049', 'p010', 'p071', 'p033', 'p015', 'p007', 'p073', 'p040', 'p003'],
+};
+
+// Actual winning bids from the live auction (Lakh). Anyone not listed here
+// falls back to their base price during seeding.
+const PLAYER_SALE_OVERRIDES_LAKH = {
+  p005: 4475, // Amit Pandey — Thunder Titans (44.75 Cr)
+  p068: 3275, // Abhijeet Jha — Plasma Panthers (32.75 Cr)
+  p033: 2825, // Subhash Mandal — Neon Knights (28.25 Cr)
+  p063: 2700, // Keyur — Voltage Vipers (27 Cr)
+  p064: 2225, // Yash Carpenter — Voltage Vipers (22.25 Cr)
+  p061: 2225, // S Vijay Kumar — Surge Strikers (22.25 Cr)
+  p066: 2075, // Rushikesh Kalantri — Voltage Vipers (20.75 Cr)
+  p048: 1925, // Ankit Agarwal — Circuit Spartans (19.25 Cr)
+  p037: 1650, // Akash Thakur — Plasma Panthers (16.50 Cr)
+  p016: 1650, // Jasdeep Juneja — Voltage Vipers (16.50 Cr)
+  p050: 1625, // Vaibhav Arora — Thunder Titans (16.25 Cr)
+  p015: 1625, // Nishant Yadav — Neon Knights (16.25 Cr)
+  p054: 1625, // Surya — Circuit Spartans (16.25 Cr)
+  p044: 1500, // Bikash Jena — Circuit Spartans (15 Cr)
+  p055: 1475, // Rahul Sarungbam Singh — Plasma Panthers (14.75 Cr)
+  p076: 1475, // Tanmay Kumar — Surge Strikers (14.75 Cr)
+  p065: 1350, // Ameya — Thunder Titans (13.50 Cr)
+  p002: 1200, // Soham Sahajwani — Circuit Spartans (12 Cr)
+  p049: 1625, // Lalit Bihani — Neon Knights (16.25 Cr)
+};
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 function newCurrentFrom(player) {
@@ -103,29 +134,43 @@ export function seedState() {
   const now = Date.now();
   const playerById = Object.fromEntries(allPlayers.map((p) => [p.id, p]));
 
-  // Resolve the pre-assignments into concrete player records, skipping any
-  // entry whose player id no longer exists (defensive against roster edits).
-  const resolvedPre = PREASSIGNMENTS
-    .map((p) => ({ ...p, player: playerById[p.playerId] }))
-    .filter((p) => p.player);
-  const preassignedIds = new Set(resolvedPre.map((p) => p.playerId));
-  const preByTeam = Object.fromEntries(resolvedPre.map((p) => [p.teamId, p]));
-
-  // Pool excludes the pre-assigned players.
-  const remaining = allPlayers.filter((p) => !preassignedIds.has(p.id));
-  const shuffled = shuffle(remaining);
-  const [first, ...rest] = shuffled;
+  // Walk the draft sheet and build each franchise's full squad. The first id
+  // in TEAM_SQUADS is the captain (flat ₹5 Cr); the rest are seeded at their
+  // own base price. Missing ids are skipped defensively so a stale draft
+  // sheet never blows up the app.
+  const soldHistory = [];
+  const assignedIds = new Set();
 
   const teams = [
     ...TEAMS.map((t) => {
-      const pre = preByTeam[t.id];
-      const squad = pre
-        ? [{ ...pre.player, soldPriceLakh: PREASSIGNED_SALE_LAKH, soldAt: now }]
-        : [];
+      const ids = TEAM_SQUADS[t.id] ?? [];
+      let spentLakh = 0;
+      const squad = [];
+      ids.forEach((playerId, idx) => {
+        const player = playerById[playerId];
+        if (!player) return;
+        const overrideLakh = PLAYER_SALE_OVERRIDES_LAKH[playerId];
+        const priceLakh =
+          overrideLakh != null
+            ? overrideLakh
+            : idx === 0
+              ? PREASSIGNED_SALE_LAKH
+              : player.basePriceLakh;
+        squad.push({ ...player, soldPriceLakh: priceLakh, soldAt: now });
+        soldHistory.push({
+          playerId: player.id,
+          playerName: player.name,
+          teamId: t.id,
+          priceLakh,
+          timestamp: now,
+        });
+        spentLakh += priceLakh;
+        assignedIds.add(player.id);
+      });
       return {
         ...t,
         initialPurseLakh: INITIAL_PURSE_LAKH,
-        purseLakh: INITIAL_PURSE_LAKH - (pre ? PREASSIGNED_SALE_LAKH : 0),
+        purseLakh: Math.max(0, INITIAL_PURSE_LAKH - spentLakh),
         squad,
         maxSquad: SQUAD_LIMIT,
         isOrganizer: false,
@@ -143,13 +188,11 @@ export function seedState() {
     },
   ];
 
-  const soldHistory = resolvedPre.map((p) => ({
-    playerId: p.player.id,
-    playerName: p.player.name,
-    teamId: p.teamId,
-    priceLakh: PREASSIGNED_SALE_LAKH,
-    timestamp: now,
-  }));
+  // Anything left over (e.g. roster additions not yet on the sheet) still
+  // flows into the live auction queue. With the current sheet this is empty.
+  const remaining = allPlayers.filter((p) => !assignedIds.has(p.id));
+  const shuffled = shuffle(remaining);
+  const [first, ...rest] = shuffled;
 
   return {
     version: STORAGE_VERSION,

@@ -6,7 +6,7 @@ import { teamColors } from '../../data/mockData';
 import PlayerAvatar from '../PlayerAvatar/PlayerAvatar';
 import './TopBids.css';
 
-const TOP_N = 5;
+const TOP_N = 10;
 
 export default function TopBids() {
   const { state } = useAuction();
